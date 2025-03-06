@@ -1,0 +1,47 @@
+<div class="container">
+    <h1>Search for Shelter Dogs</h1>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <!-- Filter by Breed -->
+    <div class="filter">
+        <label>Filter by Breed:</label>
+        <select multiple [(ngModel)]="selectedBreeds" name="breeds" (change)="fetchDogs()">
+            <option *ngFor="let breed of breeds" [value]="breed">{{ breed }}</option>
+        </select>
+    </div>
+
+    <!-- Sort Order -->
+    <div class="sort">
+        <label>Sort by Breed:</label>
+        <select [(ngModel)]="sortOrder" name="sortOrder" (change)="onSortChange(sortOrder)">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+    </div>
+
+    <!-- Dogs List -->
+    <div class="dog-list">
+        <div *ngFor="let dog of dogs" class="dog-card">
+            <img [src]="dog.img" alt="{{ dog.name }}" />
+            <h2>{{ dog.name }}</h2>
+            <p><strong>Breed:</strong> {{ dog.breed }}</p>
+            <p><strong>Age:</strong> {{ dog.age }}</p>
+            <p><strong>ZIP Code:</strong> {{ dog.zip_code }}</p>
+            <button (click)="toggleFavorite(dog.id)">
+                {{ favorites.has(dog.id) ? 'Unfavorite' : 'Favorite' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <button (click)="previousPage()" [disabled]="page === 0">Previous</button>
+        <span>Page {{ page + 1 }}</span>
+        <button (click)="nextPage()">Next</button>
+    </div>
+
+    <!-- Generate Match -->
+    <div class="match">
+        <button (click)="generateMatch()">Generate Match</button>
+    </div>
+</div>

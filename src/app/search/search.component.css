@@ -1,0 +1,47 @@
+.container {
+    padding: 20px;
+}
+
+.error {
+    color: red;
+    margin-bottom: 1rem;
+}
+
+.filter,
+.sort {
+    margin-bottom: 1rem;
+}
+
+.dog-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dog-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 300px;
+    border-radius: 8px;
+}
+
+.dog-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.pagination,
+.match {
+    margin-top: 20px;
+}
+
+.pagination button,
+.match button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
