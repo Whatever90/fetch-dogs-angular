@@ -1,2 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 @import "bootstrap/dist/css/bootstrap.min.css";
+
+.page-link {
+    cursor: pointer;
+}
+.shadow-hover {
+    box-shadow: 7px 8px 14px 1px #c0c0c000;
+    transition: box-shadow 0.2s ease-in;
+}
+.shadow-hover:hover {
+    box-shadow: 7px 8px 14px 1px #c0c0c02b;
+}
+.fade-in {
+	opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in-out;
+	animation-duration: 0.2s;
+}
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}

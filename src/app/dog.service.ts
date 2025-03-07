@@ -15,7 +15,7 @@ export class DogService {
     return this.http.get<string[]>(`${this.apiUrl}/dogs/breeds`, { withCredentials: true });
   }
 
-  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number): Observable<Dog[]> {
+  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number): Observable<any> {
     let params = new HttpParams()
       .set('size', pageSize.toString())
       .set('sort', `breed:${sortOrder}`)
@@ -23,16 +23,13 @@ export class DogService {
     breeds.forEach(breed => {
       params = params.append('breeds', breed);
     });
-
-    return this.http.get<any>(`${this.apiUrl}/dogs/search`, { params, withCredentials: true }).pipe(
-      switchMap(data => {
-        // data.resultIds is an array of dog IDs
-        return this.http.post<Dog[]>(`${this.apiUrl}/dogs`, data.resultIds, { withCredentials: true });
-      })
-    );
+    return this.http.get<any>(`${this.apiUrl}/dogs/search`, { params, withCredentials: true })
   }
-
+  getDogs(ids: string[]): Observable<Dog[]> {
+    return this.http.post<Dog[]>(`${this.apiUrl}/dogs`, ids, { withCredentials: true });
+  }
   matchDogs(favoriteIds: string[]): Observable<{ match: string }> {
     return this.http.post<{ match: string }>(`${this.apiUrl}/dogs/match`, favoriteIds, { withCredentials: true });
   }
+  
 }

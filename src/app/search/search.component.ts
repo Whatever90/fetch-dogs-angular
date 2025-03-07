@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { DogService } from '../dog.service';
 import { Dog } from '../dog.model';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { FilterComponent } from './filter/filter.component';
+import { PaginationComponent } from './pagination/pagination.component';
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, FilterComponent, PaginationComponent],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
@@ -21,32 +23,66 @@ export class SearchComponent implements OnInit {
   page: number = 0;
   sortOrder: string = 'asc';
   pageSize: number = 25;
-
-  constructor(private dogService: DogService) { }
+  loadingStatus: boolean = false;
+  dogsTotalCount: number = 0;
+  pagesTotalCount: number = 0;
+  availableIndexes = [];
+  dogsIds: {[key: string]: any} = {};
+  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.loadBreeds();
-    this.fetchDogs();
-  }
-
-  loadBreeds(): void {
-    this.dogService.getBreeds().subscribe({
-      next: data => this.breeds = data,
-      error: err => {
-        console.error(err);
-        this.error = 'Failed to load breeds.';
+    // this.fetchDogs();
+    // Subscribe to query param changes
+    this.route.queryParams.subscribe(params => {
+      console.log('SearchComponent params =>', params)
+      if(!params['breeds']) {
+        this.selectedBreeds = [];
+      } else if(typeof params['breeds'] == 'string') {
+        this.selectedBreeds = [params['breeds']]
+      } else { 
+        this.selectedBreeds = params['breeds']
       }
+      this.sortOrder = params['sortOrder'] || 'asc';
+      this.page = Number(params['page']) || 0;
+      this.fetchDogs();
     });
   }
 
   fetchDogs(): void {
+    console.log('fetchDogs', this.selectedBreeds, this.page, this.sortOrder, this.pageSize)
+    this.loadingStatus = true;
+    this.dogs = [];
     this.dogService.searchDogs(this.selectedBreeds, this.page, this.sortOrder, this.pageSize).subscribe({
-      next: data => this.dogs = data,
+      next: async data => {
+        if(data.total != this.dogsTotalCount) {
+          this.dogsTotalCount = data.total;
+          this.pagesTotalCount = Math.ceil(this.dogsTotalCount/this.pageSize);
+        }
+        await this.getDogs(data.resultIds);
+      },
       error: err => {
         console.error(err);
+        if(err.status == 401) {
+          this.router.navigate(['/'])
+        }
         this.error = 'Failed to fetch dogs.';
       }
     });
+  }
+  getDogs(ids: string[]): void {
+    this.dogService.getDogs(ids).subscribe({
+      next: data => {
+        this.dogs = data;
+        this.loadingStatus = false;
+      },
+      error: err => {
+        console.error(err);
+        if(err.status == 401) {
+          this.router.navigate(['/'])
+        }
+        this.error = 'Failed to pull dogs list.';
+      }
+    })
   }
 
   toggleFavorite(id: string): void {
@@ -57,22 +93,11 @@ export class SearchComponent implements OnInit {
     }
   }
 
-  nextPage(): void {
-    this.page++;
-    this.fetchDogs();
-  }
-
-  previousPage(): void {
-    if (this.page > 0) {
-      this.page--;
+  goToPage(page: number | string) {
+      this.page = (page as number);
       this.fetchDogs();
-    }
   }
-
-  onSortChange(order: string): void {
-    this.sortOrder = order;
-    this.fetchDogs();
-  }
+ 
 
   generateMatch(): void {
     const favArray = Array.from(this.favorites);

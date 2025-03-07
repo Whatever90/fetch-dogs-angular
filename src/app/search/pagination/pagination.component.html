@@ -1,0 +1,26 @@
+<div class="pagination mb-4 d-flex justify-content-center fade-in">
+    <nav aria-label="pagination">
+        <ul class="pagination shadow-hover">
+            <li *ngIf="page > 0" class="page-item" [ngClass]="{'disabled': page === 0}">
+                <a class="page-link" (click)="goToPage(page - 1)">
+                    <
+                </a>
+            </li>
+            <li *ngIf="page > 0" class="page-item"><a class="page-link" (click)="goToPage(0)">1</a></li>
+            <li class="page-item" *ngIf="page > 1">
+                <a class="page-link disabled bg-white">...</a>
+            </li>
+            <li class="page-item active">
+                <a class="page-link">{{page + 1}}</a>
+            </li>
+            <li *ngIf="page + 2 < pagesTotalCount" class="page-item">
+                <a class="page-link disabled bg-white">...</a>
+            </li>
+            <li *ngIf="page + 1 < pagesTotalCount" class="page-item"><a class="page-link"
+                    (click)="goToPage(pagesTotalCount - 1)">{{pagesTotalCount}}</a></li>
+            <li *ngIf="page + 1 < pagesTotalCount" class="page-item">
+                <a class="page-link" (click)="goToPage(page + 1)">></a>
+            </li>
+        </ul>
+    </nav>
+</div>

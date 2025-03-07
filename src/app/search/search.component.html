@@ -1,47 +1,51 @@
 <div class="container">
-    <h1>Search for Shelter Dogs</h1>
-    <div *ngIf="error" class="error">{{ error }}</div>
+    <nav class="navbar navbar-light sticky-top bg-light mb-4 p-2 shadow-hover">
+        <button class="navbar-toggler" type="button" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#filterDrawer" aria-controls="filterDrawer">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <p class="navbar-brand m-0">Search for Shelter Dogs</p>
 
-    <!-- Filter by Breed -->
-    <div class="filter">
-        <label>Filter by Breed:</label>
-        <select multiple [(ngModel)]="selectedBreeds" name="breeds" (change)="fetchDogs()">
-            <option *ngFor="let breed of breeds" [value]="breed">{{ breed }}</option>
-        </select>
+        <!-- Generate Match -->
+        <button (click)="generateMatch()" class="btn btn-outline-primary">Generate Match</button>
+    </nav>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer" aria-labelledby="filterDrawerLabel">
+        <filter></filter>
     </div>
 
-    <!-- Sort Order -->
-    <div class="sort">
-        <label>Sort by Breed:</label>
-        <select [(ngModel)]="sortOrder" name="sortOrder" (change)="onSortChange(sortOrder)">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-        </select>
+
+    <!-- Pagination -->
+    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+
+    <!-- Error message -->
+    <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
+        <strong>Oh snap!</strong> {{ error}}
     </div>
 
     <!-- Dogs List -->
-    <div class="dog-list">
-        <div *ngFor="let dog of dogs" class="dog-card">
-            <img [src]="dog.img" alt="{{ dog.name }}" />
-            <h2>{{ dog.name }}</h2>
-            <p><strong>Breed:</strong> {{ dog.breed }}</p>
-            <p><strong>Age:</strong> {{ dog.age }}</p>
-            <p><strong>ZIP Code:</strong> {{ dog.zip_code }}</p>
-            <button (click)="toggleFavorite(dog.id)">
-                {{ favorites.has(dog.id) ? 'Unfavorite' : 'Favorite' }}
-            </button>
+    <div class="d-flex justify-content-center fade-in" *ngIf="!error && loadingStatus">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+    <div class="dog-list" *ngIf="!error && !loadingStatus">
+        <div class="card dog-card shadow-hover fade-in" *ngFor="let dog of dogs">
+            <div class="card-body">
+                <img class="card-img-top" [src]="dog.img" alt="{{ dog.name }}">
+                <h4 class="card-title">{{ dog.name }}</h4>
+                <h6 class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted"><strong>ZIP Code:</strong> {{ dog.zip_code }}</h6>
+                <button class="btn btn-outline-success" (click)="toggleFavorite(dog.id)">
+                    {{ favorites.has(dog.id) ? 'Unfavorite' : 'Favorite' }}
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="pagination">
-        <button (click)="previousPage()" [disabled]="page === 0">Previous</button>
-        <span>Page {{ page + 1 }}</span>
-        <button (click)="nextPage()">Next</button>
-    </div>
 
-    <!-- Generate Match -->
-    <div class="match">
-        <button (click)="generateMatch()">Generate Match</button>
-    </div>
+    <!-- Pagination -->
+    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+
 </div>
