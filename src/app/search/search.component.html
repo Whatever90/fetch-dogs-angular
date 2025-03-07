@@ -14,7 +14,6 @@
         <filter></filter>
     </div>
 
-
     <!-- Pagination -->
     <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
 
@@ -32,20 +31,60 @@
     <div class="dog-list" *ngIf="!error && !loadingStatus">
         <div class="card dog-card shadow-hover fade-in" *ngFor="let dog of dogs">
             <div class="card-body">
-                <img class="card-img-top" [src]="dog.img" alt="{{ dog.name }}">
+                <!-- Button trigger modal -->
+                <img type="button" class="card-img-top" (click)="selectedDog = dog" [src]="dog.img" alt="{{ dog.name }}" data-bs-toggle="modal" data-bs-target="#dogImageExpandModal">
                 <h4 class="card-title">{{ dog.name }}</h4>
                 <h6 class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</h6>
                 <h6 class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</h6>
                 <h6 class="card-subtitle mb-2 text-muted"><strong>ZIP Code:</strong> {{ dog.zip_code }}</h6>
-                <button class="btn btn-outline-success" (click)="toggleFavorite(dog.id)">
+                <button class="btn" [ngClass]="{'btn-outline-success': !favorites.has(dog.id), 'btn-outline-warning': favorites.has(dog.id)}" (click)="toggleFavorite(dog.id)">
                     {{ favorites.has(dog.id) ? 'Unfavorite' : 'Favorite' }}
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Loading placeholder -->
+    <div class="dog-list" *ngIf="!error && loadingStatus">
+        <div class="card dog-card" aria-hidden="true" *ngFor="let i of [0,0,0,0,0,0]">
+            <div class="card-body">
+                <h5 class="card-title placeholder-glow">
+                    <span class="placeholder col-6"></span>
+                </h5>
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+                <a class="btn btn-outline-success disabled placeholder col-6" aria-disabled="true"></a>
+            </div>
+        </div>
+
+    </div>
 
     <!-- Pagination -->
     <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
 
+
+    <!-- Modal -->
+    <div class="modal fade" id="dogImageExpandModal" tabindex="-1" aria-labelledby="dogImageExpandModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" *ngIf="selectedDog">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="dogImageExpandModalLabel">{{ selectedDog.name }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img [src]="selectedDog.img" class="img-fluid d-block mx-auto" alt="Responsive image">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" [ngClass]="{'btn-outline-success': !favorites.has(selectedDog.id), 'btn-outline-warning': favorites.has(selectedDog.id)}" (click)="toggleFavorite(selectedDog.id)">
+                        {{ favorites.has(selectedDog.id) ? 'Unfavorite' : 'Favorite' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
