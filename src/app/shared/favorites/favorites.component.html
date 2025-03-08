@@ -1,0 +1,57 @@
+<div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header justify-content-between">
+                <h1 class="modal-title fs-5">Favorites list</h1>
+                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="alert alert-success fade-in m-3" *ngIf="matchedDog">
+                <div class="text-cetner p-2">
+                    <h1 class="modal-title fs-5">You matched {{ matchedDog.name }}!</h1>
+                </div>
+                <div class="modal-body">
+                    <img [src]="matchedDog.img" class="img-fluid d-block mx-auto" alt="Responsive image">
+                    <div class="row mt-3">
+                        <div class="col-6 text-end">
+                            <h6><strong>Breed:</strong></h6>
+                        </div>
+                        <div class="col-6">
+                            <h6>{{ matchedDog.breed }}</h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            <h6><strong>Age:</strong></h6>
+                        </div>
+                        <div class="col-6">
+                            <h6>{{ matchedDog.age }}</h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 text-end">
+                            <h6><strong>ZIP Code:</strong></h6>
+                        </div>
+                        <div class="col-6">
+                            <h6>{{ matchedDog.zip_code }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-light text-center m-3" *ngIf="favorites.length">
+                <button class="btn btn-success" (click)="generateMatch()">
+                    <span *ngIf="!matchedDog">Generate</span>
+                    <span *ngIf="matchedDog">Retry</span>
+                    Match
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="!favorites.length" class="alert alert-warning fade-in text-center">
+                    <strong>Oops!</strong> Looks like there are no favorites selected...
+                </div>
+                <dogs-list [loadingStatus]="false" [dogs]="convertFavoritesToDogsList()" [favorites]="favorites"
+                    (updateFavorites)="toggleFavorite($event)"
+                    (updateSelectedDog)="selectedDogUpdated($event)"></dogs-list>
+            </div>
+        </div>
+    </div>
+</div>

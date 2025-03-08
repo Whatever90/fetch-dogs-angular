@@ -1,0 +1,37 @@
+<div class="container">
+    <nav class="navbar navbar-light sticky-top bg-light mb-4 p-2 shadow-hover">
+        <button class="navbar-toggler" type="button" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#filterDrawer" aria-controls="filterDrawer" (click)="removeExtraOffCanvas()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <p class="navbar-brand m-0">Search for Shelter Dogs</p>
+
+        <!-- Favirotes / Generate Match -->
+        <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-outline-primary">Favorites
+            ({{favorites.length}})</button>
+    </nav>
+
+    <filter></filter>
+    <!-- Pagination -->
+    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+
+    <!-- Error message -->
+    <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
+        <strong>Oh snap!</strong> {{ error}}
+    </div>
+
+    <!-- Dogs List -->
+    <dogs-list *ngIf="!error" [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites" (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></dogs-list>
+
+
+    <!-- Pagination -->
+    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+
+    <!-- Favorites  Modal -->
+    <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites"
+        (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
+
+    <!-- Dog  Modal -->
+    <dog-preview #dogPreviewModal [favorites]="favorites"
+        (updateFavorites)="toggleFavorite($event)" (closed)="onDogPreviewClosed()"></dog-preview>
+</div>

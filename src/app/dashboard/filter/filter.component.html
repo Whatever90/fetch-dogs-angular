@@ -1,0 +1,25 @@
+<div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer" aria-labelledby="filterDrawerLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="filterDrawerLabel">Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Filter by Breed -->
+        <div class="form-group mb-4">
+            <label for="filterByBreed">Filter by Breed:</label>
+            <select *ngIf="breeds.length" id="filterByBreed" multiple class="form-control" [(ngModel)]="selectedBreeds"
+                name="breeds" (change)="applyFilters()">
+                <option *ngFor="let breed of breeds" [value]="breed">{{ breed }}</option>
+            </select>
+        </div>
+        <!-- Sort Order -->
+        <div class="form-group">
+            <label for="sortByBreed">Sort by Breed:</label>
+            <select id="sortByBreed" class="form-control" [(ngModel)]="sortOrder" name="sortOrder"
+                (change)="onSortChange(sortOrder)">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+    </div>
+</div>

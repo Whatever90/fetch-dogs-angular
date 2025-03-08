@@ -1,0 +1,40 @@
+<div class="dog-list">
+    <ng-container *ngIf="!loadingStatus">
+        <div class="card dog-card shadow-hover fade-in" *ngFor="let dog of dogs">
+            <div class="card-body">
+                <!-- Button trigger modal -->
+                <img type="button" class="card-img-top" (click)="selectDog(dog)" [src]="dog.img"
+                    alt="{{ dog.name }}">
+                <h4 class="card-title">{{ dog.name }}</h4>
+                <h6 class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted"><strong>ZIP Code:</strong> {{ dog.zip_code }}</h6>
+                <button class="btn w-fill"
+                    [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}"
+                    (click)="toggleFavorite(dog.id)">
+                    {{ favorites.includes(dog.id) ? 'Unfavorite' : 'Favorite' }}
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+
+    <!-- Loading placeholder -->
+    <ng-container *ngIf="loadingStatus">
+        <div class="card dog-card" aria-hidden="true" *ngFor="let i of [0,0,0,0,0,0]">
+            <div class="card-body">
+                <h5 class="card-title placeholder-glow">
+                    <span class="placeholder col-6"></span>
+                </h5>
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-7"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-4"></span>
+                    <span class="placeholder col-6"></span>
+                    <span class="placeholder col-8"></span>
+                </p>
+                <a class="btn btn-outline-success disabled placeholder col-6" aria-disabled="true"></a>
+            </div>
+        </div>
+    </ng-container>
+</div>

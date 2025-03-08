@@ -21,11 +21,11 @@ export class LoginComponent {
 
   onSubmit(): void {
     this.authService.login(this.name, this.email).subscribe({
-      next: () => this.router.navigate(['/search']),
+      next: () => this.router.navigate(['/dashboard']),
       error: err => {
         // console.error(err);
         // this.error = 'Login failed. Please check your credentials.';
-        this.router.navigate(['/search'])
+        this.router.navigate(['/dashboard'])
       }
     });
   }

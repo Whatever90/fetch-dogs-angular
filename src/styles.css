@@ -2,15 +2,52 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
 .page-link {
-    cursor: pointer;
+	cursor: pointer;
 }
+
 .shadow-hover {
-    box-shadow: 7px 8px 14px 1px #c0c0c000;
-    transition: box-shadow 0.2s ease-in;
+	box-shadow: 7px 8px 14px 1px #c0c0c000;
+	transition: box-shadow 0.2s ease-in;
 }
+
 .shadow-hover:hover {
-    box-shadow: 7px 8px 14px 1px #c0c0c02b;
+	box-shadow: 7px 8px 14px 1px #c0c0c02b;
 }
+
+.btn-success,
+.btn-outline-success {
+	box-shadow: 0px 0px 0px 0px #ffffff63;
+	transition: all 0.2s ease-in;
+}
+
+.btn-success,
+.btn-outline-success:hover {
+	box-shadow: 3px 3px 12px 2px #1987544f;
+}
+
+
+.btn-warning,
+.btn-outline-warning {
+	box-shadow: 0px 0px 0px 0px #fcfcfc;
+	transition: all 0.2s ease-in;
+}
+
+.btn-warning,
+.btn-outline-warning:hover {
+	box-shadow: 3px 3px 12px 2px #ffc1075e;
+}
+
+.btn-primary,
+.btn-outline-primary {
+	box-shadow: 0px 0px 0px 0px #ffffff;
+	transition: all 0.2s ease-in;
+}
+
+.btn-primary,
+.btn-outline-primary:hover {
+	box-shadow: 3px 3px 12px 2px #0d6efd61;
+}
+
 .fade-in {
 	opacity: 1;
 	animation-name: fadeInOpacity;
@@ -18,10 +55,16 @@
 	animation-timing-function: ease-in-out;
 	animation-duration: 0.2s;
 }
+
+.w-fill {
+	width: -webkit-fill-available;
+}
+
 @keyframes fadeInOpacity {
 	0% {
 		opacity: 0;
 	}
+
 	100% {
 		opacity: 1;
 	}

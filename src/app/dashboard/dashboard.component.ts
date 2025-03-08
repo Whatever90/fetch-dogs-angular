@@ -1,24 +1,26 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { DogService } from '../dog.service';
 import { Dog } from '../dog.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilterComponent } from './filter/filter.component';
 import { PaginationComponent } from './pagination/pagination.component';
+import { FavoritesComponent } from '../shared/favorites/favorites.component';
+import { DogPreviewComponent } from '../shared/dog-preview/dog-preview.component';
+import { DogsListComponent } from '../shared/dogs-list/dogs-list.component';
 @Component({
-  selector: 'app-search',
+  selector: 'dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterComponent, PaginationComponent],
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  imports: [CommonModule, FormsModule, FilterComponent, PaginationComponent, FavoritesComponent, DogsListComponent, DogPreviewComponent],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
 })
-export class SearchComponent implements AfterViewInit  {
+export class DashboardComponent implements AfterViewInit {
   breeds: string[] = [];
   selectedBreeds: string[] = [];
   dogs: Dog[] = [];
-  favorites: Set<string> = new Set();
+  favorites: string[] = [];
   error: string = '';
   page: number = 0;
   sortOrder: string = 'asc';
@@ -27,8 +29,12 @@ export class SearchComponent implements AfterViewInit  {
   dogsTotalCount: number = 0;
   pagesTotalCount: number = 0;
   availableIndexes = [];
-  dogsIds: { [key: string]: any } = {};
+  dogsByIds: { [key: string]: Dog } = {};
   selectedDog: Dog | null = null;
+  wasFavoritesOpen = false;
+
+  @ViewChild('favoritesModal') favoritesModalComponent!: FavoritesComponent;
+  @ViewChild('dogPreviewModal') dogPreviewModalComponent!: DogPreviewComponent;
   constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -48,16 +54,6 @@ export class SearchComponent implements AfterViewInit  {
     });
   }
   ngAfterViewInit(): void {
-    const modalElement = document.getElementById('dogImageExpandModal');
-    if (modalElement) {
-      modalElement.addEventListener('hidden.bs.modal', () => {
-        // If the active element is inside the modal, remove focus from it.
-        const activeElement = document.activeElement as HTMLElement;
-        if (activeElement && modalElement.contains(activeElement)) {
-          activeElement.blur();
-        }
-      });
-    }
   }
   fetchDogs(): void {
     this.loadingStatus = true;
@@ -84,8 +80,8 @@ export class SearchComponent implements AfterViewInit  {
     let dogsToPull: string[] = [];
     let dogsToPullLocationIdx: { [key: string]: number } = {};
     ids.forEach(id => {
-      if (this.dogsIds[id]) {
-        this.dogs.push(this.dogsIds[id]);
+      if (this.dogsByIds[id]) {
+        this.dogs.push(this.dogsByIds[id]);
       } else {
         this.dogs.push({ id });
         dogsToPull.push(id);
@@ -114,13 +110,16 @@ export class SearchComponent implements AfterViewInit  {
     })
   }
   storeDogs(dogs: Dog[]): void {
-    dogs.forEach(dog => this.dogsIds[dog.id] = dog);
+    dogs.forEach(dog => this.dogsByIds[dog.id] = dog);
   }
-  toggleFavorite(id: string): void {
-    if (this.favorites.has(id)) {
-      this.favorites.delete(id);
+  toggleFavorite(id: string | Event): void {
+    if (typeof id != 'string') id = id.toString();
+    if (this.favorites.includes(id)) {
+      this.favorites = this.favorites.filter((item) => {
+        return item !== id
+      });
     } else {
-      this.favorites.add(id);
+      this.favorites.push(id);
     }
   }
 
@@ -129,19 +128,49 @@ export class SearchComponent implements AfterViewInit  {
     this.fetchDogs();
   }
 
-
   generateMatch(): void {
-    const favArray = Array.from(this.favorites);
-    if (favArray.length === 0) {
-      alert("Please select at least one favorite dog.");
+    if (!this.favorites.length) {
       return;
     }
-    this.dogService.matchDogs(favArray).subscribe({
-      next: res => alert(`You have been matched with dog ID: ${res.match}`),
+    this.dogService.matchDogs(this.favorites).subscribe({
+      next: res => this.selectedDog = this.dogsByIds[res.match],
       error: err => {
         console.error(err);
         alert('Failed to generate a match.');
       }
     });
+  }
+  openFavoritesModal(): void {
+    this.favoritesModalComponent.openModal();
+  }
+  openDogPreviewModal(dog: Dog): void {
+    if (this.isFavoritesModalOpen()) {
+      this.wasFavoritesOpen = true;
+      this.favoritesModalComponent.closeModal();
+    }
+    this.dogPreviewModalComponent.openModal(dog);
+  }
+  selectedDogUpdated(dog: Event | Dog): void {
+    this.openDogPreviewModal(dog as Dog);
+  }
+  // Helper to determine if favorites modal is open (e.g., by checking a CSS class)
+  isFavoritesModalOpen(): boolean {
+    const modalEl = document.getElementById('favoritesModal');
+    return modalEl ? modalEl.classList.contains('show') : false;
+  }
+  // Handle the event when dog preview modal is closed.
+  onDogPreviewClosed(): void {
+    if (this.wasFavoritesOpen) {
+      this.favoritesModalComponent.openModal();
+      this.wasFavoritesOpen = false;
+    }
+  }
+  // Removes extra offcanvas-backdrop. Couldn't figure out why it renders two of them
+  // TODO: figure out wha'ts going on
+  removeExtraOffCanvas(): void {
+    let offCanvasList = document.getElementsByClassName('offcanvas-backdrop');
+    if(offCanvasList.length > 1) {
+      offCanvasList[0].remove();
+    }
   }
 }
