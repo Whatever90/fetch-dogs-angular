@@ -3,11 +3,11 @@
         <div class="modal-content">
             <div class="modal-header justify-content-between">
                 <h1 class="modal-title fs-5">Favorites list</h1>
-                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close m-0" (click)="closeModal()" aria-label="Close"></button>
             </div>
-            <div class="alert alert-success fade-in m-3" *ngIf="matchedDog">
+            <div class="alert alert-success fade-in m-3" *ngIf="matchedDog && favorites.includes(matchedDog.id)">
                 <div class="text-cetner p-2">
-                    <h1 class="modal-title fs-5">You matched {{ matchedDog.name }}!</h1>
+                    <h1 class="modal-title fs-5 text-center">You matched {{ matchedDog.name }}!</h1>
                 </div>
                 <div class="modal-body">
                     <img [src]="matchedDog.img" class="img-fluid d-block mx-auto" alt="Responsive image">
@@ -39,8 +39,8 @@
             </div>
             <div class="alert alert-light text-center m-3" *ngIf="favorites.length">
                 <button class="btn btn-success" (click)="generateMatch()">
-                    <span *ngIf="!matchedDog">Generate</span>
-                    <span *ngIf="matchedDog">Retry</span>
+                    <span *ngIf="!matchedDog || !favorites.includes(matchedDog.id)">Generate</span>
+                    <span *ngIf="matchedDog && favorites.includes(matchedDog.id)">Retry</span>
                     Match
                 </button>
             </div>
