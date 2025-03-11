@@ -14,7 +14,7 @@
     <div class="row full-height h-100vh">
         <!-- Left column: Map -->
         <div class="col-md-6 p-0 left-column">
-            <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog"></location-map-search>
+            <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog" (selectedDogEmitter)="selectedDogUpdated($event)"></location-map-search>
         </div>
 
         <!-- Right column: Dogs list -->

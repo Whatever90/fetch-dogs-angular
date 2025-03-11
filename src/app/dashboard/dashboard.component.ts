@@ -14,6 +14,8 @@ import { Location } from './../location.model';
 import { lastValueFrom } from 'rxjs';
 import { LocationMapSearchComponent } from './location-map-search/location-map-search.component';
 import { AuthService } from '../auth.service';
+import _ from 'lodash';
+
 @Component({
   selector: 'dashboard',
   standalone: true,
@@ -28,12 +30,9 @@ export class DashboardComponent implements AfterViewInit {
   favorites: string[] = [];
   error: string = '';
   page: number = 0;
-  sortOrder: string = 'asc';
-  pageSize: number = 25;
   loadingStatus: boolean = false;
   dogsTotalCount: number = 0;
   pagesTotalCount: number = 0;
-  availableIndexes = [];
   dogsByIds: { [key: string]: Dog } = {};
   selectedDog: Dog | null = null;
   hoveredDog: Dog | null = null;
@@ -115,7 +114,7 @@ export class DashboardComponent implements AfterViewInit {
       next: async data => {
         if (data.total != this.dogsTotalCount) {
           this.dogsTotalCount = data.total;
-          this.pagesTotalCount = Math.ceil(this.dogsTotalCount / this.pageSize);
+          this.pagesTotalCount = Math.ceil(this.dogsTotalCount / pageSize);
         }
         await this.getDogs(data.resultIds);
       },
@@ -217,7 +216,7 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   onDogHover(dog: Event | Dog): void {
-    this.hoveredDog = dog as Dog;
+    this.hoveredDog = _.cloneDeep(dog) as Dog;
   }
 
 

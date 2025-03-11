@@ -18,6 +18,7 @@ import { Dog } from '../../dog.model';
 export class LocationMapSearchComponent implements AfterViewInit, OnDestroy {
   @Input() dogs: Dog[] = [];
   @Input() dogToPreview: Dog | null = null;
+  @Output() selectedDogEmitter = new EventEmitter<Dog>()
   private markers: L.Marker[] = [];
 
   private map!: L.Map;
@@ -126,10 +127,9 @@ export class LocationMapSearchComponent implements AfterViewInit, OnDestroy {
         // Create popup content including a clickable button.
         const popupContent = `
           <div style="text-align: center;">
-            <img src="${dog.img}" alt="${dog.name}" style="width: 100px; height: auto; border-radius: 4px;" />
+            <img type="button" (click)="selectDog(dog)" src="${dog.img}" id="dogImg-${dog.id}" alt="${dog.name}" style="width: 100px; height: auto; border-radius: 4px;" />
             <p style="margin: 0; font-size: 0.9rem;"><strong>${dog.name}</strong></p>
-            <p style="margin: 0; font-size: 0.8rem;">ZIP: ${dog.zip_code}</p>
-            <button id="previewBtn-${dog.id}" class="btn btn-sm btn-primary">Preview</button>
+            <p style="margin: 0; font-size: 0.8rem;">${dog.location?.city}</p>
           </div>
         `;
 
@@ -172,6 +172,13 @@ export class LocationMapSearchComponent implements AfterViewInit, OnDestroy {
                 // Call your preview function, e.g., this.openDogPreview(dog);
               });
             }
+            const imgElement = document.getElementById(`dogImg-${dog.id}`);
+            if (imgElement) {
+              imgElement.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent the popup from closing
+                this.selectDog(dog); // Call the method to set the selected dog
+              });
+            }
           }
         });
       }
@@ -186,7 +193,9 @@ export class LocationMapSearchComponent implements AfterViewInit, OnDestroy {
       marker.openPopup();
     }
   }
-
+  selectDog(dog: Dog) {
+    this.selectedDogEmitter.emit(dog as Dog)
+  }
   ngOnDestroy(): void {
     // Clean up the map instance to prevent memory leaks
     if (this.map) {
