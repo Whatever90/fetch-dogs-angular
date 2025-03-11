@@ -9,6 +9,7 @@ import { PaginationComponent } from './pagination/pagination.component';
 import { FavoritesComponent } from '../shared/favorites/favorites.component';
 import { DogPreviewComponent } from '../shared/dog-preview/dog-preview.component';
 import { DogsListComponent } from '../shared/dogs-list/dogs-list.component';
+import { LocationService } from '../location.service';
 @Component({
   selector: 'dashboard',
   standalone: true,
@@ -35,7 +36,7 @@ export class DashboardComponent implements AfterViewInit {
 
   @ViewChild('favoritesModal') favoritesModalComponent!: FavoritesComponent;
   @ViewChild('dogPreviewModal') dogPreviewModalComponent!: DogPreviewComponent;
-  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService) { }
 
   ngOnInit(): void {
     // this.fetchDogs();
@@ -93,8 +94,16 @@ export class DashboardComponent implements AfterViewInit {
       return;
     }
     this.dogService.getDogs(dogsToPull).subscribe({
-      next: data => {
+      next: async data => {
+        console.log(data.map(dog => dog.zip_code))
+        let zipCodes: string[] = data.map(dog => dog.zip_code)
+          .filter((zip): zip is string => zip !== undefined);
+        console.log(zipCodes)
+        let dogsLocations = await this.locationService.postLocations(zipCodes);
         data.forEach(dog => {
+          if(dog.zip_code) {
+            dog.location = dogsLocations[dog.zip_code];
+          }
           this.dogs[dogsToPullLocationIdx[dog.id]] = dog;
         })
         this.loadingStatus = false;
@@ -169,7 +178,7 @@ export class DashboardComponent implements AfterViewInit {
   // TODO: figure out wha'ts going on
   removeExtraOffCanvas(): void {
     let offCanvasList = document.getElementsByClassName('offcanvas-backdrop');
-    if(offCanvasList.length > 1) {
+    if (offCanvasList.length > 1) {
       offCanvasList[0].remove();
     }
   }

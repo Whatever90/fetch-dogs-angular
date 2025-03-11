@@ -6,9 +6,11 @@
                 <img type="button" class="card-img-top" (click)="selectDog(dog)" [src]="dog.img"
                     alt="{{ dog.name }}">
                 <h4 class="card-title">{{ dog.name }}</h4>
-                <h6 class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</h6>
-                <h6 class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</h6>
-                <h6 class="card-subtitle mb-2 text-muted"><strong>ZIP Code:</strong> {{ dog.zip_code }}</h6>
+                <p class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</p>
+                <p class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</p>
+                <ng-container *ngIf="dog.location">
+                    <strong>Address:</strong> {{ dog.location.city }}, {{ dog.location.state }} ({{ dog.location.county }} County), {{ dog.zip_code }}
+                </ng-container>
                 <button class="btn w-fill"
                     [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}"
                     (click)="toggleFavorite(dog.id)">

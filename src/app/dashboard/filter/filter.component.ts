@@ -3,10 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DogService } from '../../dog.service';
 import { CommonModule } from '@angular/common';
-
+import { LocationSearchComponent } from './location-search/location-search.component';
 @Component({
   selector: 'filter',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, LocationSearchComponent],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css'
 })

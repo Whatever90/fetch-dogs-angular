@@ -1,4 +1,4 @@
-<div class="login-container">
+<div class="login-container dog_background">
     <h1>Login</h1>
     <form (ngSubmit)="onSubmit()">
         <div>
@@ -12,4 +12,26 @@
         <div *ngIf="error" class="error">{{ error }}</div>
         <button class="btn btn-primary" [disabled]="!name.length || !email.length" type="submit">Login</button>
     </form>
+</div>
+
+<div class="row d-flex justify-content-center m-0">
+    <div class="col-md-8 col-sm-9 col-lg-5">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Welcome to Dog Adoption Hub</h4>
+
+
+            This site is a demo project created to help dog lovers explore shelter dogs and find a potential new friend.
+            Here,
+            you can search by breed, view detailed dog profiles, mark your favorites, and even generate a match based on
+            your
+            preferences.
+
+            Please note that this website is a personal, non-commercial project built for demonstration and educational
+            purposes. While we strive to create a seamless and enjoyable browsing experience, some features or data may
+            be
+            simulated and are not part of an official dog adoption service.
+
+            Enjoy exploring and thank you for visiting!
+        </div>
+    </div>
 </div>

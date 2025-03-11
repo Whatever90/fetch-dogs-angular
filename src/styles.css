@@ -69,3 +69,7 @@
 		opacity: 1;
 	}
 }
+.dog_background {
+    background: url('./app/assets/loginBackground.png') no-repeat bottom right;
+    background-size: 161px;
+}

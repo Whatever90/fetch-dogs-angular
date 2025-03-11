@@ -1,5 +1,5 @@
-
-<div class="modal fade" id="dogImageExpandModal" tabindex="-1" aria-labelledby="dogImageExpandModalLabel" aria-hidden="true">
+<div class="modal fade" id="dogImageExpandModal" tabindex="-1" aria-labelledby="dogImageExpandModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" *ngIf="dog">
             <div class="modal-header justify-content-between p-2">
@@ -7,35 +7,19 @@
                 <h1 class="modal-title fs-5" id="dogImageExpandModalLabel">{{ dog.name }}</h1>
                 <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body dog_background text-center">
                 <img [src]="dog.img" class="img-fluid d-block mx-auto" alt="Responsive image">
-                <div class="row mt-3">
-                    <div class="col-6 text-end">
-                        <h6><strong>Breed: {{modalMode}}</strong></h6>
-                    </div>
-                    <div class="col-6">
-                        <h6>{{ dog.breed }}</h6>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6 text-end">
-                        <h6><strong>Age:</strong></h6>
-                    </div>
-                    <div class="col-6">
-                        <h6>{{ dog.age }}</h6>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6 text-end">
-                        <h6><strong>ZIP Code:</strong></h6>
-                    </div>
-                    <div class="col-6">
-                        <h6>{{ dog.zip_code }}</h6>
-                    </div>
-                </div>
+                <h6><strong>Breed:</strong> {{ dog.breed }}</h6>
+
+                <h6><strong>Age:</strong> {{ dog.age }}</h6>
+                <h6 *ngIf="dog.location"><strong>Address</strong>: {{ dog.location.city }}, {{ dog.location.state }} ({{
+                    dog.location.county }} County), {{
+                    dog.zip_code }}</h6>
             </div>
             <div class="modal-footer">
-                <button class="btn" [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}" (click)="toggleFavorite(dog.id)">
+                <button class="btn"
+                    [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}"
+                    (click)="toggleFavorite(dog.id)">
                     {{ favorites.includes(dog.id) ? 'Unfavorite' : 'Favorite' }}
                 </button>
             </div>
