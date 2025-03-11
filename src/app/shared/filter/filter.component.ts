@@ -3,10 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DogService } from '../../dog.service';
 import { CommonModule } from '@angular/common';
-import { LocationSearchComponent } from './location-search/location-search.component';
+import { LocationMapSearchComponent } from '../../dashboard/location-map-search/location-map-search.component';
+import { LocationService } from '../../location.service';
+import { Location } from '../../location.model';
+
 @Component({
   selector: 'filter',
-  imports: [FormsModule, CommonModule, LocationSearchComponent],
+  imports: [FormsModule, CommonModule, LocationMapSearchComponent],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css'
 })
@@ -17,19 +20,28 @@ export class FilterComponent {
   sortOrder: string = 'asc';
   page: number = 0;
   error: string = '';
+  criteria: {
+    city?: string;
+    states?: string[];
+    geoBoundingBox?: { top: number, left: number, bottom: number, right: number };
+    size?: number;
+    from?: number;
+  } = {};
 
-  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute) {
+  locations: Location[] | null = null;
+  total: number = 0;
+  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService) {
   }
   ngOnInit() {
     this.loadBreeds();
     const queryParams = this.route.snapshot.queryParams;
-    if(queryParams['page']) {
+    if (queryParams['page']) {
       this.page = queryParams['page']
     }
-    if(queryParams['breeds']) {
+    if (queryParams['breeds']) {
       this.selectedBreeds = typeof queryParams['breeds'] == 'string' ? [queryParams['breeds']] : queryParams['breeds'];
     }
-    if(queryParams['sortOrder']) {
+    if (queryParams['sortOrder']) {
       this.sortOrder = queryParams['sortOrder']
     }
   }
@@ -38,7 +50,7 @@ export class FilterComponent {
       next: data => this.breeds = data as string[],
       error: err => {
         console.error(err);
-        if(err.status == 401) {
+        if (err.status == 401) {
           this.router.navigate(['/'])
         }
         this.error = 'Failed to load breeds.';

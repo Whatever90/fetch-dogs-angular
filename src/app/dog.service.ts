@@ -15,13 +15,16 @@ export class DogService {
     return this.http.get<string[]>(`${this.apiUrl}/dogs/breeds`, { withCredentials: true });
   }
 
-  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number): Observable<any> {
+  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number, zipCodes: string[]): Observable<any> {
     let params = new HttpParams()
       .set('size', pageSize.toString())
       .set('sort', `breed:${sortOrder}`)
       .set('from', (page * pageSize).toString());
     breeds.forEach(breed => {
       params = params.append('breeds', breed);
+    });
+    zipCodes.forEach(zipCode => {
+      params = params.append('zipCodes', zipCode);
     });
     return this.http.get<any>(`${this.apiUrl}/dogs/search`, { params, withCredentials: true })
   }

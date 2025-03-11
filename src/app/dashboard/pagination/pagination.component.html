@@ -1,6 +1,6 @@
 <div class="pagination mb-2 mt-2 d-flex justify-content-center fade-in">
     <nav aria-label="pagination">
-        <ul class="pagination shadow-hover">
+        <ul class="pagination shadow-hover" *ngIf="pagesTotalCount > 1">
             <li *ngIf="page > 0" class="page-item" [ngClass]="{'disabled': page === 0}">
                 <a class="page-link" (click)="goToPage(page - 1)">
                     <

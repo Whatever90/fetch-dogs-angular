@@ -27,12 +27,14 @@
                             <h6>{{ matchedDog.age }}</h6>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" *ngIf="matchedDog.location">
                         <div class="col-6 text-end">
-                            <h6><strong>ZIP Code:</strong></h6>
+                            <h6><strong>Address:</strong></h6>
                         </div>
                         <div class="col-6">
-                            <h6>{{ matchedDog.zip_code }}</h6>
+                            <h6>{{ matchedDog.location.city }}, {{ matchedDog.location.state }} ({{
+                                matchedDog.location.county }} County), {{
+                                matchedDog.zip_code }}</h6>
                         </div>
                     </div>
                 </div>

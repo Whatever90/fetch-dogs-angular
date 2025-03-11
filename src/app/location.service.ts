@@ -35,6 +35,7 @@ export class LocationService {
 
             // Process the fetched locations.
             for (const loc of locations) {
+                if(!loc) continue;
                 const zipCode = loc.zip_code;
                 // Cache the location in cityByZipcode for future use.
                 this.cityByZipcode[zipCode] = loc;

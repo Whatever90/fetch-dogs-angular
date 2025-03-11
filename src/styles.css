@@ -1,5 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
 @import "bootstrap/dist/css/bootstrap.min.css";
+@import 'leaflet/dist/leaflet.css';
 
 .page-link {
 	cursor: pointer;
@@ -69,7 +69,21 @@
 		opacity: 1;
 	}
 }
+
 .dog_background {
-    background: url('./app/assets/loginBackground.png') no-repeat bottom right;
-    background-size: 161px;
+	background: url('./app/assets/loginBackground.png') no-repeat bottom right;
+	background-size: 161px;
+}
+
+.h-100vh {
+	height: 100vh;
+}
+
+.btn-sm {
+	padding: 0.25rem 0.5rem;
+	/* Adjusts the internal spacing */
+	font-size: 0.875rem;
+	/* Smaller font size */
+	line-height: 1.5;
+	/* Ensures a comfortable line height */
 }

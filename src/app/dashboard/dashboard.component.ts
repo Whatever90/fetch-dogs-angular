@@ -4,16 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { DogService } from '../dog.service';
 import { Dog } from '../dog.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FilterComponent } from './filter/filter.component';
+import { FilterComponent } from '../shared/filter/filter.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { FavoritesComponent } from '../shared/favorites/favorites.component';
 import { DogPreviewComponent } from '../shared/dog-preview/dog-preview.component';
 import { DogsListComponent } from '../shared/dogs-list/dogs-list.component';
 import { LocationService } from '../location.service';
+import { Location } from './../location.model';
+import { lastValueFrom } from 'rxjs';
+import { LocationMapSearchComponent } from './location-map-search/location-map-search.component';
+import { AuthService } from '../auth.service';
+
 @Component({
   selector: 'dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterComponent, PaginationComponent, FavoritesComponent, DogsListComponent, DogPreviewComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, FavoritesComponent, DogsListComponent, DogPreviewComponent, LocationMapSearchComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -32,16 +37,33 @@ export class DashboardComponent implements AfterViewInit {
   availableIndexes = [];
   dogsByIds: { [key: string]: Dog } = {};
   selectedDog: Dog | null = null;
+  hoveredDog: Dog | null = null;
   wasFavoritesOpen = false;
+  zipCodes: string[] = [];
+  criteria: {
+    city?: string;
+    states?: string[];
+    geoBoundingBox?: { top: number, left: number, bottom: number, right: number };
+    size?: number;
+    from?: number;
+  } = {};
 
+  locations: Location[] | null = null;
+  total: number = 0;
+  dogsLocations = {};
   @ViewChild('favoritesModal') favoritesModalComponent!: FavoritesComponent;
   @ViewChild('dogPreviewModal') dogPreviewModalComponent!: DogPreviewComponent;
-  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService) { }
+  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService, private authService: AuthService) { }
 
   ngOnInit(): void {
     // this.fetchDogs();
+  }
+  ngAfterViewInit(): void {
+    this.filterListeners();
+  }
+  async filterListeners() {
     // Subscribe to query param changes
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       if (!params['breeds']) {
         this.selectedBreeds = [];
       } else if (typeof params['breeds'] == 'string') {
@@ -51,15 +73,44 @@ export class DashboardComponent implements AfterViewInit {
       }
       this.sortOrder = params['sortOrder'] || 'asc';
       this.page = Number(params['page']) || 0;
+      let newGeoBoundingBox = { top: params['top'], left: params['left'], bottom: params['bottom'], right: params['right'] };
+      if(newGeoBoundingBox.top === undefined) {
+        return;
+      }
+      if (newGeoBoundingBox.top && newGeoBoundingBox.left && newGeoBoundingBox.bottom && newGeoBoundingBox.right && JSON.stringify(this.criteria.geoBoundingBox) != JSON.stringify(newGeoBoundingBox)) {
+        this.criteria.geoBoundingBox = newGeoBoundingBox;
+        // Optionally, set a default size if not provided.
+        this.criteria.size = this.criteria.size || 25;
+        this.criteria.geoBoundingBox = {
+          top: Number(this.criteria.geoBoundingBox.top),
+          left: Number(this.criteria.geoBoundingBox.left),
+          bottom: Number(this.criteria.geoBoundingBox.bottom),
+          right: Number(this.criteria.geoBoundingBox.right)
+        };
+        try {
+          const foundLocations = await lastValueFrom(this.locationService.searchLocations(this.criteria));
+          if (foundLocations?.results) {
+            if (!foundLocations?.results.length) {
+              this.dogs = [];
+              return;
+            }
+            this.zipCodes = foundLocations.results.map(loc => loc.zip_code);
+          }
+        } catch (error: any) {
+          console.error('error!', error);
+          if (error.status == 401) {
+            this.router.navigate(['/'])
+          }
+        }
+
+      }
       this.fetchDogs();
     });
-  }
-  ngAfterViewInit(): void {
   }
   fetchDogs(): void {
     this.loadingStatus = true;
     this.dogs = [];
-    this.dogService.searchDogs(this.selectedBreeds, this.page, this.sortOrder, this.pageSize).subscribe({
+    this.dogService.searchDogs(this.selectedBreeds, this.page, this.sortOrder, this.pageSize, this.zipCodes).subscribe({
       next: async data => {
         if (data.total != this.dogsTotalCount) {
           this.dogsTotalCount = data.total;
@@ -76,47 +127,50 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
   }
-  getDogs(ids: string[]): void {
-    this.dogs = [];
-    let dogsToPull: string[] = [];
-    let dogsToPullLocationIdx: { [key: string]: number } = {};
-    ids.forEach(id => {
-      if (this.dogsByIds[id]) {
-        this.dogs.push(this.dogsByIds[id]);
-      } else {
-        this.dogs.push({ id });
-        dogsToPull.push(id);
-        dogsToPullLocationIdx[id] = dogsToPull.length - 1;
+  async getDogs(ids: string[]) {
+    try {
+      this.dogs = [];
+      let dogsToPull: string[] = [];
+      let dogsToPullLocationIdx: { [key: string]: number } = {};
+      let newDogsList: Dog[] = [];
+      ids.forEach(id => {
+        if (this.dogsByIds[id]) {
+          newDogsList.push(this.dogsByIds[id]);
+        } else {
+          this.dogs.push({ id });
+          dogsToPull.push(id);
+          dogsToPullLocationIdx[id] = dogsToPull.length - 1;
+        }
+      });
+      if (!dogsToPull.length) {
+        this.dogs = newDogsList;
+        this.loadingStatus = false;
+        return;
       }
-    });
-    if (!dogsToPull.length) {
-      this.loadingStatus = false;
-      return;
-    }
-    this.dogService.getDogs(dogsToPull).subscribe({
-      next: async data => {
-        console.log(data.map(dog => dog.zip_code))
-        let zipCodes: string[] = data.map(dog => dog.zip_code)
+      let dogs: Dog[] | undefined = await this.dogService.getDogs(dogsToPull).toPromise();
+      if (dogs) {
+        let zipCodes: string[] = dogs.map(dog => dog.zip_code)
           .filter((zip): zip is string => zip !== undefined);
-        console.log(zipCodes)
         let dogsLocations = await this.locationService.postLocations(zipCodes);
-        data.forEach(dog => {
-          if(dog.zip_code) {
+        this.dogsLocations = dogsLocations;
+        dogs.forEach(dog => {
+          if (dog.zip_code) {
             dog.location = dogsLocations[dog.zip_code];
           }
-          this.dogs[dogsToPullLocationIdx[dog.id]] = dog;
+          newDogsList[dogsToPullLocationIdx[dog.id]] = dog;
         })
         this.loadingStatus = false;
-        this.storeDogs(data);
-      },
-      error: err => {
-        console.error(err);
-        if (err.status == 401) {
-          this.router.navigate(['/'])
-        }
-        this.error = 'Failed to pull dogs list.';
+        this.dogs = newDogsList;
+        this.storeDogs(dogs);
       }
-    })
+    } catch (err: any) {
+
+      console.error(err);
+      if (err?.status == 401) {
+        this.router.navigate(['/'])
+      }
+      this.error = 'Failed to pull dogs list.';
+    }
   }
   storeDogs(dogs: Dog[]): void {
     dogs.forEach(dog => this.dogsByIds[dog.id] = dog);
@@ -174,6 +228,12 @@ export class DashboardComponent implements AfterViewInit {
       this.wasFavoritesOpen = false;
     }
   }
+
+  onDogHover(dog: Event | Dog): void {
+    this.hoveredDog = dog as Dog;
+  }
+
+
   // Removes extra offcanvas-backdrop. Couldn't figure out why it renders two of them
   // TODO: figure out wha'ts going on
   removeExtraOffCanvas(): void {
@@ -181,5 +241,26 @@ export class DashboardComponent implements AfterViewInit {
     if (offCanvasList.length > 1) {
       offCanvasList[0].remove();
     }
+  }
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: res => this.router.navigate(['/']),
+      error: err => {
+        console.error(err);
+        if (err.code == 201) {
+          this.router.navigate(['/'])
+        }
+        alert('Failed to logout.');
+      }
+    });
+  }
+  async test() {
+    this.locationService.searchLocations({ city: 'Ocala' }).subscribe({
+      next: data => {
+
+      },
+      error: err => {
+      }
+    })
   }
 }

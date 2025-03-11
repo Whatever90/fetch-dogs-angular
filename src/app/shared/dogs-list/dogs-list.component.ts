@@ -14,6 +14,7 @@ export class DogsListComponent {
   @Input() favorites: string[] = [];
   @Output() updateFavorites = new EventEmitter<string>();
   @Output() updateSelectedDog = new EventEmitter<Dog>();
+  @Output() updateHoveredDog = new EventEmitter<Dog>();
   constructor() { }
   toggleFavorite(id: string | Event): void {
     if (typeof id != 'string') id = id.toString();
@@ -21,5 +22,11 @@ export class DogsListComponent {
   }
   selectDog(dog: Dog): void {
     this.updateSelectedDog.emit(dog);
+  }
+  test() {
+    console.log(this.dogs)
+  }
+  hoverDog(dog: Dog): void {
+    this.updateHoveredDog.emit(dog);
   }
 }

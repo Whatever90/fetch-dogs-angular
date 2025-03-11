@@ -13,7 +13,7 @@
             </select>
         </div>
         <!-- Sort Order -->
-        <div class="form-group">
+        <div class="form-group mb-4">
             <label for="sortByBreed">Sort by Breed:</label>
             <select id="sortByBreed" class="form-control" [(ngModel)]="sortOrder" name="sortOrder"
                 (change)="onSortChange(sortOrder)">
@@ -21,6 +21,10 @@
                 <option value="desc">Descending</option>
             </select>
         </div>
-        <location-search></location-search>
+        <div class="form-group">
+            <label for="locationSearch">Location Search:</label>
+            <!-- Other form inputs for city, states, etc. -->
+            <location-map-search id="locationSearch"></location-map-search>
+        </div>
     </div>
 </div>

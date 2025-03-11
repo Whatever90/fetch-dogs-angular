@@ -17,7 +17,7 @@
                     dog.zip_code }}</h6>
             </div>
             <div class="modal-footer">
-                <button class="btn"
+                <button class="btn btn-sm"
                     [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}"
                     (click)="toggleFavorite(dog.id)">
                     {{ favorites.includes(dog.id) ? 'Unfavorite' : 'Favorite' }}

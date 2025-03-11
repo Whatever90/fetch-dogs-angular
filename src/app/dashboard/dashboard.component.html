@@ -1,37 +1,62 @@
-<div class="container">
-    <nav class="navbar navbar-light sticky-top bg-light mb-4 p-2 shadow-hover">
-        <button class="navbar-toggler" type="button" type="button" data-bs-toggle="offcanvas"
-            data-bs-target="#filterDrawer" aria-controls="filterDrawer" (click)="removeExtraOffCanvas()">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <p class="navbar-brand m-0">Search for Shelter Dogs</p>
+<!-- <nav class="navbar navbar-light sticky-top bg-light mb-4 p-2 shadow-hover">
+    <button class="navbar-toggler" type="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer"
+        aria-controls="filterDrawer" (click)="removeExtraOffCanvas()">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <p class="navbar-brand m-0" (click)="test()">Search for Shelter Dogs</p>
 
-        <!-- Favirotes / Generate Match -->
-        <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-outline-primary">Favorites
-            ({{favorites.length}})</button>
-    </nav>
+    <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-outline-primary">Favorites
+        ({{favorites.length}})</button>
+</nav> -->
+<!-- <filter></filter> -->
 
-    <filter></filter>
-    <!-- Pagination -->
-    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+<div class="container-fluid full-height h-100vh">
+    <div class="row full-height h-100vh">
+        <!-- Left column: Map -->
+        <div class="col-md-6 p-0 left-column">
+            <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog"></location-map-search>
+        </div>
 
-    <!-- Error message -->
-    <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
-        <strong>Oh snap!</strong> {{ error}}
+        <!-- Right column: Dogs list -->
+        <div class="col-md-6 right-column h-100vh overflow-x-auto dog_background">
+            <div class="w-100 d-flex justify-content-between p-2">
+                <button [disabled]="!favorites.length" (click)="openFavoritesModal()"
+                    class="btn btn-outline-primary btn-sm">Favorites
+                    ({{favorites.length}})</button>
+                <button class="btn btn-outline-danger btn-sm" (click)="logout()">Logout</button>
+            </div>
+            <div class="row">
+
+                <div class="col-4">
+
+                </div>
+                <div class="col-4">
+                    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page">
+
+                    </pagination>
+                </div>
+            </div>
+            <!-- Error message -->
+            <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
+                <strong>Oh snap!</strong> {{ error}}
+            </div>
+
+            <!-- Dogs List -->
+            <dogs-list *ngIf="!error"  [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites"
+                (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)" (updateHoveredDog)="onDogHover($event)"></dogs-list>
+
+
+            <!-- Pagination -->
+            <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page">
+            </pagination>
+
+            <!-- Favorites  Modal -->
+            <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites"
+                (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
+
+            <!-- Dog  Modal -->
+            <dog-preview #dogPreviewModal [favorites]="favorites" (updateFavorites)="toggleFavorite($event)"
+                (closed)="onDogPreviewClosed()"></dog-preview>
+        </div>
     </div>
-
-    <!-- Dogs List -->
-    <dogs-list *ngIf="!error" [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites" (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></dogs-list>
-
-
-    <!-- Pagination -->
-    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
-
-    <!-- Favorites  Modal -->
-    <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites"
-        (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
-
-    <!-- Dog  Modal -->
-    <dog-preview #dogPreviewModal [favorites]="favorites"
-        (updateFavorites)="toggleFavorite($event)" (closed)="onDogPreviewClosed()"></dog-preview>
 </div>
