@@ -120,11 +120,6 @@ export class LocationMapSearchComponent implements AfterViewInit, OnDestroy {
       if (dog.location && typeof dog.location.latitude === 'number' && typeof dog.location.longitude === 'number') {
         const marker = L.marker([dog.location.latitude, dog.location.longitude]).addTo(this.map);
 
-        // Create popup options with autoPan disabled and our custom offset.
-        // const popupOptions: L.PopupOptions = {
-        //   autoPan: false,
-        //   offset: L.point(offsetX, offsetY)
-        // };
         const popupOptions: L.PopupOptions = {
           autoPan: false
         };

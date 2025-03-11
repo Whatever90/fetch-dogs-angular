@@ -19,11 +19,18 @@
 
         <!-- Right column: Dogs list -->
         <div class="col-md-6 right-column h-100vh overflow-x-auto dog_background">
-            <div class="w-100 d-flex justify-content-between p-2">
-                <button [disabled]="!favorites.length" (click)="openFavoritesModal()"
-                    class="btn btn-outline-primary btn-sm">Favorites
-                    ({{favorites.length}})</button>
-                <button class="btn btn-outline-danger btn-sm" (click)="logout()">Logout</button>
+            <div class="row w-100 p-2">
+                <div class="col-4">
+                    <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-sm"
+                        [ngClass]="{'btn-success': favorites.length, 'btn-outline-success': !favorites.length}">Favorites
+                        ({{favorites.length}})</button>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                    <button class="btn btn-outline-secondary btn-sm" (click)="openFilterModal()">Filter settings</button>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                    <button class="btn btn-outline-danger btn-sm" (click)="logout()">Logout</button>
+                </div>
             </div>
             <div class="row">
 
@@ -42,8 +49,9 @@
             </div>
 
             <!-- Dogs List -->
-            <dogs-list *ngIf="!error"  [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites"
-                (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)" (updateHoveredDog)="onDogHover($event)"></dogs-list>
+            <dogs-list *ngIf="!error" [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites"
+                (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"
+                (updateHoveredDog)="onDogHover($event)"></dogs-list>
 
 
             <!-- Pagination -->
@@ -57,6 +65,9 @@
             <!-- Dog  Modal -->
             <dog-preview #dogPreviewModal [favorites]="favorites" (updateFavorites)="toggleFavorite($event)"
                 (closed)="onDogPreviewClosed()"></dog-preview>
+
+            <!-- Filter  Modal -->
+            <filter #filterModal></filter>
         </div>
     </div>
 </div>

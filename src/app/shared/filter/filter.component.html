@@ -1,30 +1,54 @@
-<div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer" aria-labelledby="filterDrawerLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="filterDrawerLabel">Settings</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body dog_background">
-        <!-- Filter by Breed -->
-        <div class="form-group mb-4">
-            <label for="filterByBreed">Filter by Breed:</label>
-            <select *ngIf="breeds.length" id="filterByBreed" multiple class="form-control" [(ngModel)]="selectedBreeds"
-                name="breeds" (change)="applyFilters()">
-                <option *ngFor="let breed of breeds" [value]="breed">{{ breed }}</option>
-            </select>
-        </div>
-        <!-- Sort Order -->
-        <div class="form-group mb-4">
-            <label for="sortByBreed">Sort by Breed:</label>
-            <select id="sortByBreed" class="form-control" [(ngModel)]="sortOrder" name="sortOrder"
-                (change)="onSortChange(sortOrder)">
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="locationSearch">Location Search:</label>
-            <!-- Other form inputs for city, states, etc. -->
-            <location-map-search id="locationSearch"></location-map-search>
+<div class="modal fade" id="filterSettingsModal" tabindex="-1" aria-labelledby="filterSettingsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header justify-content-between p-2">
+                <div></div>
+                <h1 class="modal-title fs-5" id="filterSettingsModalLabel">Filter settings</h1>
+                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body dog_background">
+                <!-- Filter by Breed -->
+                <div class="form-group mb-4">
+                    <label for="filterByBreed" class="form-label">Filter by Breed:</label>
+                    <select *ngIf="breeds.length" id="filterByBreed" multiple class="form-control"
+                        [(ngModel)]="selectedBreeds" name="breeds" (change)="applyFilters()">
+                        <option *ngFor="let breed of breeds" [value]="breed">{{ breed }}</option>
+                    </select>
+                </div>
+                <!-- Age -->
+                <div class="d-flex justify-content-between" [ngClass]="{'text-danger': ageMin > ageMax }" >
+                    <div class="form-group mb-3 me-3 input-element-wrapper">
+                        <label for="ageMin" class="form-label">Minimum Age:</label>
+                        <input type="number" [max]="ageMax" (change)="applyFilters()" id="ageMin" [(ngModel)]="ageMin" name="ageMin"
+                            class="form-control" placeholder="Enter min age">
+                    </div>
+                    <div class="mb-3 input-element-wrapper">
+                        <label for="ageMax" class="form-label">Maximum Age:</label>
+                        <input type="number" [min]="ageMin" (change)="applyFilters()" id="ageMax" [(ngModel)]="ageMax" name="ageMax"
+                            class="form-control" placeholder="Enter max age">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <!-- Page size -->
+                    <div class="form-group mb-3 me-3 input-element-wrapper">
+                        <label for="pageSize" class="form-label">Page size:</label>
+                        <input type="number" [min]="1" (change)="onSortChange(sortOrder)" id="pageSize" [(ngModel)]="pageSize" name="pageSize"
+                            class="form-control" placeholder="Enter page size">
+                    </div>
+                    <!-- Sort Order -->
+                    <div class="mb-3 input-element-wrapper">
+                        <label for="sortByBreed" class="form-label">Sort by Breed:</label>
+                        <select id="sortByBreed" class="form-control" [(ngModel)]="sortOrder" name="sortOrder"
+                            (change)="onSortChange(sortOrder)">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Psuedo footer -->
+                <div class="mt-2 p-4"></div>
+            </div>
         </div>
     </div>
 </div>

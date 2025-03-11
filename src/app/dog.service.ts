@@ -15,7 +15,7 @@ export class DogService {
     return this.http.get<string[]>(`${this.apiUrl}/dogs/breeds`, { withCredentials: true });
   }
 
-  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number, zipCodes: string[]): Observable<any> {
+  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number, zipCodes: string[], ageMin: number | null, ageMax: number | null): Observable<any> {
     let params = new HttpParams()
       .set('size', pageSize.toString())
       .set('sort', `breed:${sortOrder}`)
@@ -26,6 +26,12 @@ export class DogService {
     zipCodes.forEach(zipCode => {
       params = params.append('zipCodes', zipCode);
     });
+    if (ageMin) {
+      params = params.append('ageMin', ageMin.toString());
+    }
+    if (ageMax) {
+      params = params.append('ageMax', ageMax.toString());
+    }
     return this.http.get<any>(`${this.apiUrl}/dogs/search`, { params, withCredentials: true })
   }
   getDogs(ids: string[]): Observable<Dog[]> {
@@ -34,5 +40,5 @@ export class DogService {
   matchDogs(favoriteIds: string[]): Observable<{ match: string }> {
     return this.http.post<{ match: string }>(`${this.apiUrl}/dogs/match`, favoriteIds, { withCredentials: true });
   }
-  
+
 }

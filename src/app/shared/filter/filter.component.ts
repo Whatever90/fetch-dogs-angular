@@ -3,15 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DogService } from '../../dog.service';
 import { CommonModule } from '@angular/common';
-import { LocationMapSearchComponent } from '../../dashboard/location-map-search/location-map-search.component';
-import { LocationService } from '../../location.service';
 import { Location } from '../../location.model';
+import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'filter',
-  imports: [FormsModule, CommonModule, LocationMapSearchComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './filter.component.html',
-  styleUrl: './filter.component.css'
+  styleUrls: ['./filter.component.css']
 })
 export class FilterComponent {
 
@@ -27,12 +26,20 @@ export class FilterComponent {
     size?: number;
     from?: number;
   } = {};
-
+  pageSize: number = 25;
+  ageMin: number = 0;
+  ageMax: number = 31;
   locations: Location[] | null = null;
   total: number = 0;
-  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService) {
+  private modalInstance!: Modal;
+
+  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute) {
   }
   ngOnInit() {
+    const modalEl = document.getElementById('filterSettingsModal');
+    if (modalEl) {
+      this.modalInstance = new Modal(modalEl);
+    }
     this.loadBreeds();
     const queryParams = this.route.snapshot.queryParams;
     if (queryParams['page']) {
@@ -43,6 +50,26 @@ export class FilterComponent {
     }
     if (queryParams['sortOrder']) {
       this.sortOrder = queryParams['sortOrder']
+    }
+    if (queryParams['ageMin']) {
+      this.ageMin = queryParams['ageMin'];
+    }
+    if (queryParams['ageMax']) {
+      this.ageMax = queryParams['ageMax'];
+    }
+    if (queryParams['pageSize']) {
+      this.pageSize = queryParams['pageSize'];
+    }
+  }
+  openModal(): void {
+    if (this.modalInstance) {
+      this.modalInstance.show();
+    }
+  }
+
+  closeModal(): void {
+    if (this.modalInstance) {
+      this.modalInstance.hide();
     }
   }
   async loadBreeds() {
@@ -58,9 +85,9 @@ export class FilterComponent {
     });
   }
   applyFilters(): void {
-    // Update the URL query params with a comma-separated string of selected breeds.
+    if (this.ageMin > this.ageMax) return;
     this.router.navigate([], {
-      queryParams: { breeds: this.selectedBreeds, page: 0 },
+      queryParams: { breeds: this.selectedBreeds, page: 0, ageMin: this.ageMin, ageMax: this.ageMax, pageSize: this.pageSize },
       queryParamsHandling: 'merge'
     });
   }
@@ -68,7 +95,7 @@ export class FilterComponent {
     this.sortOrder = order;
     this.page = 0;
     this.router.navigate([], {
-      queryParams: { page: 0, sortOrder: order },
+      queryParams: { page: 0, sortOrder: order, pageSize: this.pageSize },
       queryParamsHandling: 'merge'
     });
   }

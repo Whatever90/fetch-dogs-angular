@@ -20,7 +20,7 @@
 	transition: all 0.2s ease-in;
 }
 
-.btn-success,
+.btn-success:hover,
 .btn-outline-success:hover {
 	box-shadow: 3px 3px 12px 2px #1987544f;
 }
@@ -32,7 +32,7 @@
 	transition: all 0.2s ease-in;
 }
 
-.btn-warning,
+.btn-warning:hover,
 .btn-outline-warning:hover {
 	box-shadow: 3px 3px 12px 2px #ffc1075e;
 }
@@ -43,7 +43,7 @@
 	transition: all 0.2s ease-in;
 }
 
-.btn-primary,
+.btn-primary:hover,
 .btn-outline-primary:hover {
 	box-shadow: 3px 3px 12px 2px #0d6efd61;
 }

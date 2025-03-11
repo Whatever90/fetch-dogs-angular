@@ -14,11 +14,10 @@ import { Location } from './../location.model';
 import { lastValueFrom } from 'rxjs';
 import { LocationMapSearchComponent } from './location-map-search/location-map-search.component';
 import { AuthService } from '../auth.service';
-
 @Component({
   selector: 'dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent, FavoritesComponent, DogsListComponent, DogPreviewComponent, LocationMapSearchComponent],
+  imports: [CommonModule, FormsModule, PaginationComponent, FavoritesComponent, DogsListComponent, DogPreviewComponent, LocationMapSearchComponent, FilterComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -52,11 +51,11 @@ export class DashboardComponent implements AfterViewInit {
   total: number = 0;
   dogsLocations = {};
   @ViewChild('favoritesModal') favoritesModalComponent!: FavoritesComponent;
+  @ViewChild('filterModal') filterModalComponent!: FilterComponent;
   @ViewChild('dogPreviewModal') dogPreviewModalComponent!: DogPreviewComponent;
   constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService, private authService: AuthService) { }
 
   ngOnInit(): void {
-    // this.fetchDogs();
   }
   ngAfterViewInit(): void {
     this.filterListeners();
@@ -64,17 +63,20 @@ export class DashboardComponent implements AfterViewInit {
   async filterListeners() {
     // Subscribe to query param changes
     this.route.queryParams.subscribe(async params => {
-      if (!params['breeds']) {
-        this.selectedBreeds = [];
-      } else if (typeof params['breeds'] == 'string') {
-        this.selectedBreeds = [params['breeds']]
+      let selectedBreeds = []
+      if (typeof params['breeds'] == 'string') {
+        selectedBreeds = [params['breeds']]
       } else {
-        this.selectedBreeds = params['breeds']
+        selectedBreeds = params['breeds'] || [];
       }
-      this.sortOrder = params['sortOrder'] || 'asc';
-      this.page = Number(params['page']) || 0;
+      let sortOrder = params['sortOrder'] || 'asc';
+      let page = Number(params['page']) || 0;
+      let ageMin = Number(params['ageMin']) || null;
+      let ageMax = Number(params['ageMax']) || null;
+      let pageSize = Number(params['pageSize']) || 25;
+      let zipCodes: string[] = [];
       let newGeoBoundingBox = { top: params['top'], left: params['left'], bottom: params['bottom'], right: params['right'] };
-      if(newGeoBoundingBox.top === undefined) {
+      if (newGeoBoundingBox.top === undefined) {
         return;
       }
       if (newGeoBoundingBox.top && newGeoBoundingBox.left && newGeoBoundingBox.bottom && newGeoBoundingBox.right && JSON.stringify(this.criteria.geoBoundingBox) != JSON.stringify(newGeoBoundingBox)) {
@@ -94,7 +96,7 @@ export class DashboardComponent implements AfterViewInit {
               this.dogs = [];
               return;
             }
-            this.zipCodes = foundLocations.results.map(loc => loc.zip_code);
+            zipCodes = foundLocations.results.map(loc => loc.zip_code);
           }
         } catch (error: any) {
           console.error('error!', error);
@@ -102,15 +104,14 @@ export class DashboardComponent implements AfterViewInit {
             this.router.navigate(['/'])
           }
         }
-
       }
-      this.fetchDogs();
+      this.fetchDogs(selectedBreeds, page, sortOrder, pageSize, zipCodes, ageMin, ageMax);
     });
   }
-  fetchDogs(): void {
+  fetchDogs(selectedBreeds: string[], page: number, sortOrder: string, pageSize: number, zipCodes: string[], ageMin: number | null, ageMax: number | null): void {
     this.loadingStatus = true;
     this.dogs = [];
-    this.dogService.searchDogs(this.selectedBreeds, this.page, this.sortOrder, this.pageSize, this.zipCodes).subscribe({
+    this.dogService.searchDogs(selectedBreeds, page, sortOrder, pageSize, zipCodes, ageMin, ageMax).subscribe({
       next: async data => {
         if (data.total != this.dogsTotalCount) {
           this.dogsTotalCount = data.total;
@@ -186,25 +187,11 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  goToPage(page: number | string) {
-    this.page = (page as number);
-    this.fetchDogs();
-  }
-
-  generateMatch(): void {
-    if (!this.favorites.length) {
-      return;
-    }
-    this.dogService.matchDogs(this.favorites).subscribe({
-      next: res => this.selectedDog = this.dogsByIds[res.match],
-      error: err => {
-        console.error(err);
-        alert('Failed to generate a match.');
-      }
-    });
-  }
   openFavoritesModal(): void {
     this.favoritesModalComponent.openModal();
+  }
+  openFilterModal(): void {
+    this.filterModalComponent.openModal();
   }
   openDogPreviewModal(dog: Dog): void {
     if (this.isFavoritesModalOpen()) {
