@@ -18,7 +18,7 @@
                 </button>
             </div>
         </div>
-        <div class="alert alert-warning" role="alert" *ngIf="!dogs.length">
+        <div class="alert alert-warning" role="alert" *ngIf="!favoritesMode && !dogs.length">
             <strong>No dogs found in the area.</strong> Please adjust your search criteria.
         </div>
     </ng-container>

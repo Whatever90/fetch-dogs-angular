@@ -50,7 +50,7 @@
                 <div *ngIf="!favorites.length" class="alert alert-warning fade-in text-center">
                     <strong>Oops!</strong> Looks like there are no favorites selected...
                 </div>
-                <dogs-list [loadingStatus]="false" [dogs]="convertFavoritesToDogsList()" [favorites]="favorites"
+                <dogs-list [loadingStatus]="false" [favoritesMode]="true" [dogs]="convertFavoritesToDogsList()" [favorites]="favorites"
                     (updateFavorites)="toggleFavorite($event)"
                     (updateSelectedDog)="selectedDogUpdated($event)"></dogs-list>
             </div>

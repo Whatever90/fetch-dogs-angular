@@ -75,6 +75,7 @@ export class DashboardComponent implements OnInit {
       let ageMin = Number(params['ageMin']) || null;
       let ageMax = Number(params['ageMax']) || null;
       let pageSize = Number(params['pageSize']) || 25;
+      let sortField = params['sortField'] || 'name';
       let zipCodes: string[] = [];
       let newGeoBoundingBox = { top: params['top'], left: params['left'], bottom: params['bottom'], right: params['right'] };
       if (newGeoBoundingBox.top === undefined) {
@@ -106,13 +107,13 @@ export class DashboardComponent implements OnInit {
           }
         }
       }
-      this.fetchDogs(selectedBreeds, page, sortOrder, pageSize, zipCodes, ageMin, ageMax);
+      this.fetchDogs(selectedBreeds, page, sortField, sortOrder, pageSize, zipCodes, ageMin, ageMax);
     });
   }
-  fetchDogs(selectedBreeds: string[], page: number, sortOrder: string, pageSize: number, zipCodes: string[], ageMin: number | null, ageMax: number | null): void {
+  fetchDogs(selectedBreeds: string[], page: number, sortField: string, sortOrder: string, pageSize: number, zipCodes: string[], ageMin: number | null, ageMax: number | null): void {
     this.loadingStatus = true;
     this.dogs = [];
-    this.dogService.searchDogs(selectedBreeds, page, sortOrder, pageSize, zipCodes, ageMin, ageMax).subscribe({
+    this.dogService.searchDogs(selectedBreeds, page, sortField, sortOrder, pageSize, zipCodes, ageMin, ageMax).subscribe({
       next: async data => {
         if (data.total != this.dogsTotalCount) {
           this.dogsTotalCount = data.total;
@@ -139,7 +140,7 @@ export class DashboardComponent implements OnInit {
         if (this.dogsByIds[id]) {
           newDogsList.push(this.dogsByIds[id]);
         } else {
-          this.dogs.push({ id });
+          newDogsList.push({ id });
           dogsToPull.push(id);
           dogsToPullLocationIdx[id] = dogsToPull.length - 1;
         }
@@ -167,10 +168,10 @@ export class DashboardComponent implements OnInit {
           if (dog.zip_code) {
             dog.location = dogsLocations[dog.zip_code];
           }
-          if (dogsToPullLocationIdx[dog.id]) {
+          if (dogsToPullLocationIdx[dog.id] != undefined) {
             newDogsList[dogsToPullLocationIdx[dog.id]] = dog;
           }
-        })
+        });
         this.loadingStatus = false;
         this.dogs = newDogsList;
         this.storeDogs(dogs);

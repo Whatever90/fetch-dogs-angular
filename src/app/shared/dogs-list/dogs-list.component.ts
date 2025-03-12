@@ -10,6 +10,7 @@ import { Dog } from '../../dog.model';
 })
 export class DogsListComponent {
   @Input() loadingStatus: boolean = false;
+  @Input() favoritesMode: boolean = false;
   @Input() dogs: Dog[] = [];
   @Input() favorites: string[] = [];
   @Output() updateFavorites = new EventEmitter<string>();

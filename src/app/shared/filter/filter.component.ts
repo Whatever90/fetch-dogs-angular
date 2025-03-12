@@ -17,7 +17,7 @@ export class FilterComponent {
   breeds: string[] = [];
   selectedBreeds: string[] = [];
   sortOrder: string = 'asc';
-  page: number = 0;
+  sortField: 'breed' | 'name' | 'age' = 'name';
   error: string = '';
   criteria: {
     city?: string;
@@ -29,8 +29,7 @@ export class FilterComponent {
   pageSize: number = 25;
   ageMin: number = 0;
   ageMax: number = 31;
-  locations: Location[] | null = null;
-  total: number = 0;
+  previousValuesStorage: { [key: string]: any } = {};
   private modalInstance!: Modal;
 
   constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute) {
@@ -42,14 +41,14 @@ export class FilterComponent {
     }
     this.loadBreeds();
     const queryParams = this.route.snapshot.queryParams;
-    if (queryParams['page']) {
-      this.page = queryParams['page']
-    }
     if (queryParams['breeds']) {
       this.selectedBreeds = typeof queryParams['breeds'] == 'string' ? [queryParams['breeds']] : queryParams['breeds'];
     }
     if (queryParams['sortOrder']) {
       this.sortOrder = queryParams['sortOrder']
+    }
+    if (queryParams['sortField']) {
+      this.sortField = queryParams['sortField']
     }
     if (queryParams['ageMin']) {
       this.ageMin = queryParams['ageMin'];
@@ -64,6 +63,14 @@ export class FilterComponent {
   openModal(): void {
     if (this.modalInstance) {
       this.modalInstance.show();
+      this.previousValuesStorage = {
+        selectedBreeds: this.selectedBreeds,
+        ageMin: this.ageMin,
+        ageMax: this.ageMax,
+        pageSize: this.pageSize,
+        sortField: this.sortField,
+        sortOrder: this.sortOrder
+      }
     }
   }
 
@@ -93,10 +100,28 @@ export class FilterComponent {
   }
   onSortChange(order: string): void {
     this.sortOrder = order;
-    this.page = 0;
     this.router.navigate([], {
       queryParams: { page: 0, sortOrder: order, pageSize: this.pageSize },
       queryParamsHandling: 'merge'
     });
+  }
+  save(): void {
+    this.router.navigate([], {
+      queryParams: { 
+        breeds: this.selectedBreeds, 
+        page: 0, 
+        ageMin: this.ageMin, 
+        ageMax: this.ageMax, 
+        pageSize: this.pageSize,
+        sortOrder: this.sortOrder,
+        sortField: this.sortField
+      },
+      queryParamsHandling: 'merge'
+    });
+    this.closeModal();
+  }
+  cancel(): void {
+    Object.assign(this, this.previousValuesStorage);
+    this.closeModal();
   }
 }

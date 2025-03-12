@@ -15,10 +15,10 @@ export class DogService {
     return this.http.get<string[]>(`${this.apiUrl}/dogs/breeds`, { withCredentials: true });
   }
 
-  searchDogs(breeds: string[], page: number, sortOrder: string, pageSize: number, zipCodes: string[], ageMin: number | null, ageMax: number | null): Observable<any> {
+  searchDogs(breeds: string[], page: number, sortField: string, sortOrder: string, pageSize: number, zipCodes: string[], ageMin: number | null, ageMax: number | null): Observable<any> {
     let params = new HttpParams()
       .set('size', pageSize.toString())
-      .set('sort', `breed:${sortOrder}`)
+      .set('sort', `${sortField}:${sortOrder}`)
       .set('from', (page * pageSize).toString());
     breeds.forEach(breed => {
       params = params.append('breeds', breed);
