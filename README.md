@@ -2,21 +2,6 @@
 
 **BarkBrowse** is a single-page Angular application that lets users search for shelter dogs. It provides a user-friendly interface to filter, sort, and browse dog profiles, manage favorites, and view detailed profiles—all in one place.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation)
-- [Running Locally](#running-locally)
-- [Deployment](#deployment)
-  - [Routing Considerations](#routing-considerations)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Overview
 
 BarkBrowse is designed to help users quickly find the perfect shelter dog by filtering search results by breed, age, and other criteria. The application offers:
@@ -29,7 +14,7 @@ BarkBrowse is designed to help users quickly find the perfect shelter dog by fil
 ## Features
 
 - **Search & Filter:**  
-  Easily filter dogs by breed, minimum and maximum age.
+  Easily filter dogs by breed and minimum and maximum age.
 
 - **Sorting:**  
   Sort results by fields such as breed, name, or age in ascending or descending order (e.g., `sort=breed:asc`).
@@ -41,7 +26,7 @@ BarkBrowse is designed to help users quickly find the perfect shelter dog by fil
   Save and manage your favorite shelter dogs.
 
 - **Map Search:**  
-  Utilize an integrated map view (powered by Leaflet) to locate nearby shelters, making it easier to find dogs available in your area.
+  You can use an integrated map view (powered by Leaflet) to locate nearby shelters, making finding dogs available in your area easier.
 
 - **Responsive Design:**  
   A mobile-first, responsive design ensures a great experience on any device.
@@ -72,6 +57,7 @@ BarkBrowse is designed to help users quickly find the perfect shelter dog by fil
    ```
 
 2. **Install Dependencies:**
+   
    ```bash
    npm install
    ```
@@ -79,9 +65,9 @@ BarkBrowse is designed to help users quickly find the perfect shelter dog by fil
 ## Running Locally
 To run the application on your local machine:
 
-    ```bash
-    ng serve
-    ```
+  ```bash
+   ng serve
+  ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
