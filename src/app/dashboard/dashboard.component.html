@@ -1,73 +1,52 @@
-<!-- <nav class="navbar navbar-light sticky-top bg-light mb-4 p-2 shadow-hover">
-    <button class="navbar-toggler" type="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterDrawer"
-        aria-controls="filterDrawer" (click)="removeExtraOffCanvas()">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <p class="navbar-brand m-0" (click)="test()">Search for Shelter Dogs</p>
-
-    <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-outline-primary">Favorites
-        ({{favorites.length}})</button>
-</nav> -->
-<!-- <filter></filter> -->
-
 <div class="container-fluid full-height h-100vh">
-    <div class="row full-height h-100vh">
-        <!-- Left column: Map -->
-        <div class="col-md-6 p-0 left-column">
-            <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog" (selectedDogEmitter)="selectedDogUpdated($event)"></location-map-search>
+    <div class="row full-height h-100vh" id="column-wrapper">
+      <!-- Left column: Map -->
+      <div class="col-12 col-md-6 p-0" id="left-column">
+        <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog"
+          (selectedDogEmitter)="selectedDogUpdated($event)"></location-map-search>
+      </div>
+  
+      <!-- Right column: Dogs list -->
+      <div class="col-12 col-md-6 right-column h-100vh overflow-x-auto dog_background" id="right-column">
+        <div class="row w-100 p-2">
+          <div class="col-4">
+            <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-sm"
+              [ngClass]="{'btn-success': favorites.length, 'btn-outline-success': !favorites.length}">
+              Favorites ({{favorites.length}})
+            </button>
+          </div>
+          <div class="col-4 d-flex justify-content-center">
+            <button class="btn btn-outline-secondary btn-sm" (click)="openFilterModal()">Filter</button>
+          </div>
+          <div class="col-4 d-flex justify-content-end">
+            <button class="btn btn-outline-danger btn-sm" (click)="logout()">Logout</button>
+          </div>
         </div>
-
-        <!-- Right column: Dogs list -->
-        <div class="col-md-6 right-column h-100vh overflow-x-auto dog_background">
-            <div class="row w-100 p-2">
-                <div class="col-4">
-                    <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-sm"
-                        [ngClass]="{'btn-success': favorites.length, 'btn-outline-success': !favorites.length}">Favorites
-                        ({{favorites.length}})</button>
-                </div>
-                <div class="col-4 d-flex justify-content-center">
-                    <button class="btn btn-outline-secondary btn-sm" (click)="openFilterModal()">Filter settings</button>
-                </div>
-                <div class="col-4 d-flex justify-content-end">
-                    <button class="btn btn-outline-danger btn-sm" (click)="logout()">Logout</button>
-                </div>
-            </div>
-            <div class="row">
-
-                <div class="col-4">
-
-                </div>
-                <div class="col-4">
-                    <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page">
-
-                    </pagination>
-                </div>
-            </div>
-            <!-- Error message -->
-            <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
-                <strong>Oh snap!</strong> {{ error}}
-            </div>
-
-            <!-- Dogs List -->
-            <dogs-list *ngIf="!error" [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites"
-                (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"
-                (updateHoveredDog)="onDogHover($event)"></dogs-list>
-
-
-            <!-- Pagination -->
-            <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page">
-            </pagination>
-
-            <!-- Favorites  Modal -->
-            <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites"
-                (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
-
-            <!-- Dog  Modal -->
-            <dog-preview #dogPreviewModal [favorites]="favorites" (updateFavorites)="toggleFavorite($event)"
-                (closed)="onDogPreviewClosed()"></dog-preview>
-
-            <!-- Filter  Modal -->
-            <filter #filterModal></filter>
+        <div class="row">
+          <div class="col-4"></div>
+          <div class="col-4 d-flex justify-content-center">
+            <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+          </div>
         </div>
+        <!-- Error message -->
+        <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
+          <strong>Oh snap!</strong> {{ error }}
+        </div>
+        <!-- Dogs List -->
+        <dogs-list *ngIf="!error" [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites"
+          (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"
+          (updateHoveredDog)="onDogHover($event)"></dogs-list>
+        <!-- Pagination -->
+        <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
+        <!-- Favorites Modal -->
+        <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites"
+          (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
+        <!-- Dog Modal -->
+        <dog-preview #dogPreviewModal [favorites]="favorites" (updateFavorites)="toggleFavorite($event)"
+          (closed)="onDogPreviewClosed()"></dog-preview>
+        <!-- Filter Modal -->
+        <filter #filterModal></filter>
+      </div>
     </div>
-</div>
+  </div>
+  

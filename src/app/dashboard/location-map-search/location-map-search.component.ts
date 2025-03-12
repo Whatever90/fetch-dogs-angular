@@ -11,9 +11,7 @@ import { Dog } from '../../dog.model';
   template: `
     <div id="map"></div>
   `,
-  styles: [`
-    #map { width: 100%; height: 100vh; }
-  `]
+  styleUrls: ['./location-map-search.component.css'],
 })
 export class LocationMapSearchComponent implements AfterViewInit, OnDestroy {
   @Input() dogs: Dog[] = [];
