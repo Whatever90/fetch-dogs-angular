@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit {
         } catch (error: any) {
           console.error('error!', error);
           if (error.status == 401) {
-            this.router.navigate(['/'])
+            this.router.navigate(['/login'])
           }
         }
       }
@@ -124,7 +124,7 @@ export class DashboardComponent implements OnInit {
       error: err => {
         console.error(err);
         if (err.status == 401) {
-          this.router.navigate(['/'])
+          this.router.navigate(['/login'])
         }
         this.error = 'Failed to fetch dogs.';
       }
@@ -180,7 +180,7 @@ export class DashboardComponent implements OnInit {
 
       console.error(err);
       if (err?.status == 401) {
-        this.router.navigate(['/'])
+        this.router.navigate(['/login'])
       }
       this.error = 'Failed to pull dogs list.';
     }
@@ -239,12 +239,12 @@ export class DashboardComponent implements OnInit {
   logout(): void {
     this.authService.logout().subscribe({
       next: res => {
-        this.router.navigate(['/'])
+        this.router.navigate(['/login'])
       },
       error: err => {
         console.error(err);
         if (err.code == 201) {
-          this.router.navigate(['/'])
+          this.router.navigate(['/login'])
         }
         alert('Failed to logout.');
       }

@@ -85,7 +85,7 @@ export class FilterComponent {
       error: err => {
         console.error(err);
         if (err.status == 401) {
-          this.router.navigate(['/'])
+          this.router.navigate(['/login'])
         }
         this.error = 'Failed to load breeds.';
       }

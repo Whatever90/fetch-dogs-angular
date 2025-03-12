@@ -25,10 +25,8 @@ export class LoginComponent {
     this.error = '';
     this.authService.login(this.name, this.email).subscribe({
       next: () => {
-        // Assuming the response or your login logic confirms the user,
-        // set the current user in the favorites service.
         this.favoritesService.setCurrentUser(this.name);
-        this.router.navigate(['/dashboard'])
+        this.router.navigate(['/'])
         this.loadingStatus = false;
       },
       error: err => {
