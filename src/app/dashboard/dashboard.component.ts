@@ -15,6 +15,7 @@ import { lastValueFrom } from 'rxjs';
 import { LocationMapSearchComponent } from './location-map-search/location-map-search.component';
 import { AuthService } from '../auth.service';
 import _ from 'lodash';
+import { FavoritesService } from '../favorites.service';
 
 @Component({
   selector: 'dashboard',
@@ -23,7 +24,7 @@ import _ from 'lodash';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements OnInit {
   breeds: string[] = [];
   selectedBreeds: string[] = [];
   dogs: Dog[] = [];
@@ -52,12 +53,13 @@ export class DashboardComponent implements AfterViewInit {
   @ViewChild('favoritesModal') favoritesModalComponent!: FavoritesComponent;
   @ViewChild('filterModal') filterModalComponent!: FilterComponent;
   @ViewChild('dogPreviewModal') dogPreviewModalComponent!: DogPreviewComponent;
-  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService, private authService: AuthService) { }
+  constructor(private dogService: DogService, private router: Router, private route: ActivatedRoute, private locationService: LocationService, private authService: AuthService, private favoritesService: FavoritesService) { }
 
-  ngOnInit(): void {
-  }
-  ngAfterViewInit(): void {
+  async ngOnInit() {
+    this.favorites = this.favoritesService.getFavorites();
     this.filterListeners();
+  }
+  async ngAfterViewInit() {
   }
   async filterListeners() {
     // Subscribe to query param changes
@@ -127,13 +129,13 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
   }
-  async getDogs(ids: string[]) {
+  async getDogs(dogIds: string[]) {
     try {
       this.dogs = [];
       let dogsToPull: string[] = [];
       let dogsToPullLocationIdx: { [key: string]: number } = {};
       let newDogsList: Dog[] = [];
-      ids.forEach(id => {
+      dogIds.forEach(id => {
         if (this.dogsByIds[id]) {
           newDogsList.push(this.dogsByIds[id]);
         } else {
@@ -142,6 +144,14 @@ export class DashboardComponent implements AfterViewInit {
           dogsToPullLocationIdx[id] = dogsToPull.length - 1;
         }
       });
+      // also need to pull dogs info for the favorites list on the first load
+      if (this.favorites.length) {
+        this.favorites.forEach(dogId => {
+          if (!this.dogsByIds[dogId] && !dogsToPull.includes(dogId)) {
+            dogsToPull.push(dogId)
+          }
+        })
+      }
       if (!dogsToPull.length) {
         this.dogs = newDogsList;
         this.loadingStatus = false;
@@ -157,7 +167,9 @@ export class DashboardComponent implements AfterViewInit {
           if (dog.zip_code) {
             dog.location = dogsLocations[dog.zip_code];
           }
-          newDogsList[dogsToPullLocationIdx[dog.id]] = dog;
+          if (dogsToPullLocationIdx[dog.id]) {
+            newDogsList[dogsToPullLocationIdx[dog.id]] = dog;
+          }
         })
         this.loadingStatus = false;
         this.dogs = newDogsList;
@@ -175,17 +187,11 @@ export class DashboardComponent implements AfterViewInit {
   storeDogs(dogs: Dog[]): void {
     dogs.forEach(dog => this.dogsByIds[dog.id] = dog);
   }
-  toggleFavorite(id: string | Event): void {
-    if (typeof id != 'string') id = id.toString();
-    if (this.favorites.includes(id)) {
-      this.favorites = this.favorites.filter((item) => {
-        return item !== id
-      });
-    } else {
-      this.favorites.push(id);
-    }
+  toggleFavorite(dogId: string | Event): void {
+    if (typeof dogId != 'string') dogId = dogId.toString();
+    this.favoritesService.toggleFavorite(dogId);
+    this.favorites = this.favoritesService.getFavorites();
   }
-
   openFavoritesModal(): void {
     this.favoritesModalComponent.openModal();
   }
@@ -220,6 +226,7 @@ export class DashboardComponent implements AfterViewInit {
   }
 
 
+
   // Removes extra offcanvas-backdrop. Couldn't figure out why it renders two of them
   // TODO: figure out wha'ts going on
   removeExtraOffCanvas(): void {
@@ -230,7 +237,9 @@ export class DashboardComponent implements AfterViewInit {
   }
   logout(): void {
     this.authService.logout().subscribe({
-      next: res => this.router.navigate(['/']),
+      next: res => {
+        this.router.navigate(['/'])
+      },
       error: err => {
         console.error(err);
         if (err.code == 201) {
@@ -239,14 +248,5 @@ export class DashboardComponent implements AfterViewInit {
         alert('Failed to logout.');
       }
     });
-  }
-  async test() {
-    this.locationService.searchLocations({ city: 'Ocala' }).subscribe({
-      next: data => {
-
-      },
-      error: err => {
-      }
-    })
   }
 }

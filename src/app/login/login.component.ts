@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../auth.service';
+import { FavoritesService } from '../favorites.service';
 
 @Component({
   selector: 'app-login',
@@ -16,16 +17,24 @@ export class LoginComponent {
   name: string = '';
   email: string = '';
   error: string = '';
-
-  constructor(private authService: AuthService, private router: Router) { }
+  loadingStatus: boolean = false;
+  constructor(private authService: AuthService, private router: Router, private favoritesService: FavoritesService) { }
 
   onSubmit(): void {
+    this.loadingStatus = true;
+    this.error = '';
     this.authService.login(this.name, this.email).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: err => {
-        // console.error(err);
-        // this.error = 'Login failed. Please check your credentials.';
+      next: () => {
+        // Assuming the response or your login logic confirms the user,
+        // set the current user in the favorites service.
+        this.favoritesService.setCurrentUser(this.name);
         this.router.navigate(['/dashboard'])
+        this.loadingStatus = false;
+      },
+      error: err => {
+        console.error(err);
+        this.error = 'Login failed. Please check your credentials.';
+        this.loadingStatus = false;
       }
     });
   }

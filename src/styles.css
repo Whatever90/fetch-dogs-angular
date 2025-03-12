@@ -71,7 +71,7 @@
 }
 
 .dog_background {
-	background: url('./app/assets/loginBackground.png') no-repeat bottom right;
+	background: url('./assets/dogBackground.png') no-repeat bottom right;
 	background-size: 161px;
 }
 

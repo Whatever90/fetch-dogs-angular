@@ -1,9 +1,9 @@
-<div class="dog-list" (click)="test()">
+<div class="dog-list">
     <ng-container *ngIf="!loadingStatus">
         <div class="card dog-card shadow-hover fade-in" *ngFor="let dog of dogs">
-            <div class="card-body" (mouseenter)="hoverDog(dog)">
-                <!-- Button trigger modal -->
-                <img type="button" class="card-img-top" (click)="selectDog(dog)" [src]="dog.img" alt="{{ dog.name }}">
+            <div class="card-body" *ngIf="dog" (mouseenter)="hoverDog(dog)">
+                <!-- Button trigger dog preview modal -->
+                <img type="button" class="card-img-top" (click)="selectDog(dog)" [src]="dog?.img" alt="{{ dog?.name }}">
                 <h4 class="card-title">{{ dog.name }}</h4>
                 <p class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</p>
                 <p class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</p>

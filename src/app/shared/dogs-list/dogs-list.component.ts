@@ -23,9 +23,6 @@ export class DogsListComponent {
   selectDog(dog: Dog): void {
     this.updateSelectedDog.emit(dog);
   }
-  test() {
-    console.log(this.dogs)
-  }
   hoverDog(dog: Dog): void {
     this.updateHoveredDog.emit(dog);
   }
