@@ -1,52 +1,86 @@
-<div class="container-fluid full-height h-100vh">
-    <div class="row full-height h-100vh" id="column-wrapper">
-      <!-- Left column: Map -->
-      <div class="col-12 col-md-6 p-0" id="left-column">
-        <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog"
-          (selectedDogEmitter)="selectedDogUpdated($event)"></location-map-search>
+<div class="dashboard-page">
+  <header class="app-header">
+    <a class="brand" routerLink="/" aria-label="BarkBrowse home">
+      <span class="brand-mark" aria-hidden="true">B</span>
+      <span class="brand-name">BarkBrowse</span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Main navigation">
+      <a class="nav-link active" routerLink="/" aria-current="page">
+        <span class="nav-dot" aria-hidden="true"></span>
+        Discover
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-light header-button saved-dogs-action"
+        aria-label="Open saved dogs list" [disabled]="!favorites.length" (click)="openFavoritesModal()">
+        <span aria-hidden="true">♡</span>
+        Saved dogs <span class="count-pill">{{ favorites.length }}</span>
+      </button>
+      <button type="button" class="profile-button" (click)="logout()" aria-label="Log out">
+        <span class="profile-avatar" aria-hidden="true">BB</span>
+        <span class="logout-label">Log out</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <section class="page-intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">A good match starts here</p>
+        <h1 id="page-title">Find your new best friend</h1>
+        <p class="intro-copy">Explore adoptable dogs around you and meet the one who feels like home.</p>
       </div>
-  
-      <!-- Right column: Dogs list -->
-      <div class="col-12 col-md-6 right-column h-100vh overflow-x-auto dog_background" id="right-column">
-        <div class="row w-100 p-2">
-          <div class="col-4">
-            <button [disabled]="!favorites.length" (click)="openFavoritesModal()" class="btn btn-sm"
-              [ngClass]="{'btn-success': favorites.length, 'btn-outline-success': !favorites.length}">
-              Favorites ({{favorites.length}})
-            </button>
+      <div class="intro-note">
+        <span class="intro-note-icon" aria-hidden="true">⌖</span>
+        <span>Move the map to explore nearby dogs</span>
+      </div>
+    </section>
+
+    <div class="browse-layout">
+      <section class="surface map-panel" aria-label="Dogs near the selected map area">
+        <div class="panel-heading">
+          <div>
+            <h2>Explore by location</h2>
+            <p>Pan or zoom to update your search</p>
           </div>
-          <div class="col-4 d-flex justify-content-center">
-            <button class="btn btn-outline-secondary btn-sm" (click)="openFilterModal()">Filter</button>
-          </div>
-          <div class="col-4 d-flex justify-content-end">
-            <button class="btn btn-outline-danger btn-sm" (click)="logout()">Logout</button>
-          </div>
+          <span class="live-indicator"><span aria-hidden="true"></span> Live map</span>
         </div>
-        <div class="row">
-          <div class="col-4"></div>
-          <div class="col-4 d-flex justify-content-center">
-            <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
-          </div>
+        <div class="map-frame">
+          <location-map-search [dogs]="dogs" [dogToPreview]="hoveredDog"
+            (selectedDogEmitter)="selectedDogUpdated($event)"></location-map-search>
         </div>
-        <!-- Error message -->
+      </section>
+
+      <section class="surface results-panel" aria-labelledby="results-title">
+        <div class="results-heading">
+          <div>
+            <p class="eyebrow">Your search</p>
+            <h2 id="results-title">Dogs to meet</h2>
+            <p class="results-summary">{{ dogsTotalCount }} {{ dogsTotalCount === 1 ? 'dog' : 'dogs' }} found in this area</p>
+          </div>
+          <button type="button" class="btn btn-outline-primary compact-filter" (click)="openFilterModal()">
+            <span aria-hidden="true">☷</span>
+            Filters
+          </button>
+        </div>
+
         <div class="alert alert-danger fade-in" role="alert" *ngIf="error">
-          <strong>Oh snap!</strong> {{ error }}
+          <strong>We couldn’t complete that search.</strong> {{ error }}
         </div>
-        <!-- Dogs List -->
+
         <dogs-list *ngIf="!error" [loadingStatus]="loadingStatus" [dogs]="dogs" [favorites]="favorites"
           (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"
           (updateHoveredDog)="onDogHover($event)"></dogs-list>
-        <!-- Pagination -->
-        <pagination [dogsTotalCount]="dogsTotalCount" [pagesTotalCount]="pagesTotalCount" [page]="page"></pagination>
-        <!-- Favorites Modal -->
-        <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites"
-          (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
-        <!-- Dog Modal -->
-        <dog-preview #dogPreviewModal [favorites]="favorites" (updateFavorites)="toggleFavorite($event)"
-          (closed)="onDogPreviewClosed()"></dog-preview>
-        <!-- Filter Modal -->
-        <filter #filterModal></filter>
-      </div>
+
+      </section>
     </div>
-  </div>
-  
+  </main>
+
+  <favorites #favoritesModal [dogsByIds]="dogsByIds" [favorites]="favorites" [loadingStatus]="loadingStatus"
+    (updateFavorites)="toggleFavorite($event)" (updateSelectedDog)="selectedDogUpdated($event)"></favorites>
+  <dog-preview #dogPreviewModal [favorites]="favorites" (updateFavorites)="toggleFavorite($event)"
+    (closed)="onDogPreviewClosed()"></dog-preview>
+  <filter #filterModal></filter>
+</div>

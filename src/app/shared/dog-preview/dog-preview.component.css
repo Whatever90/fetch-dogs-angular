@@ -1,0 +1,137 @@
+.modal-dialog {
+    max-width: min(560px, calc(100vw - 1.5rem));
+}
+
+.modal-content {
+    overflow: hidden;
+    border: 1px solid #e2e9eb;
+    border-radius: 20px;
+    box-shadow: 0 24px 70px rgba(7, 38, 53, 0.2);
+}
+
+.dog-preview-header {
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.2rem 1.4rem;
+    border-bottom: 1px solid #edf0f1;
+    background: #fff;
+}
+
+.dog-preview-heading {
+    min-width: 0;
+}
+
+.dog-preview-eyebrow {
+    margin: 0 0 0.25rem;
+    color: #087c78;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.dog-preview-title {
+    margin: 0;
+    color: #072635;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.dog-preview-close {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    margin-left: 1rem;
+}
+
+.dog-preview-body {
+    padding: 1.25rem 1.5rem;
+}
+
+.dog-preview-photo {
+    max-height: 48vh;
+    margin-bottom: 1.25rem;
+    border-radius: 14px;
+    object-fit: contain;
+}
+
+.dog-preview-body h6 {
+    margin: 0.7rem 0;
+    color: #43565d;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.dog-preview-body h6 strong {
+    color: #072635;
+}
+
+.dog-preview-footer {
+    justify-content: flex-end;
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid #edf0f1;
+    background: #fff;
+}
+
+.dog-preview-save-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.65rem 1.05rem;
+    border: 1px solid #087c78;
+    border-radius: 11px;
+    background: #087c78;
+    color: #fff;
+    font-size: 0.84rem;
+    font-weight: 750;
+    transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.dog-preview-save-button:hover {
+    transform: translateY(-1px);
+    border-color: #066b68;
+    background: #066b68;
+}
+
+.dog-preview-save-button.is-saved {
+    border-color: #f0d7d4;
+    background: #fff3f1;
+    color: #a94342;
+}
+
+.dog-preview-save-button.is-saved:hover {
+    border-color: #e8c2be;
+    background: #fce9e7;
+}
+
+.dog-preview-save-button:focus-visible,
+.dog-preview-close:focus-visible {
+    outline: 3px solid rgba(8, 124, 120, 0.3);
+    outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    .modal-dialog {
+        margin: 0.75rem auto;
+    }
+
+    .dog-preview-header {
+        padding: 1rem 1.1rem;
+    }
+
+    .dog-preview-title {
+        font-size: 1.15rem;
+    }
+
+    .dog-preview-body {
+        padding: 1rem 1.1rem;
+    }
+
+    .dog-preview-footer {
+        padding: 0.85rem 1.1rem 1rem;
+    }
+}

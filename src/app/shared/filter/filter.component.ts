@@ -26,7 +26,6 @@ export class FilterComponent {
     size?: number;
     from?: number;
   } = {};
-  pageSize: number = 25;
   ageMin: number = 0;
   ageMax: number = 31;
   previousValuesStorage: { [key: string]: any } = {};
@@ -56,9 +55,6 @@ export class FilterComponent {
     if (queryParams['ageMax']) {
       this.ageMax = queryParams['ageMax'];
     }
-    if (queryParams['pageSize']) {
-      this.pageSize = queryParams['pageSize'];
-    }
   }
   openModal(): void {
     if (this.modalInstance) {
@@ -67,7 +63,6 @@ export class FilterComponent {
         selectedBreeds: this.selectedBreeds,
         ageMin: this.ageMin,
         ageMax: this.ageMax,
-        pageSize: this.pageSize,
         sortField: this.sortField,
         sortOrder: this.sortOrder
       }
@@ -94,14 +89,14 @@ export class FilterComponent {
   applyFilters(): void {
     if (this.ageMin > this.ageMax) return;
     this.router.navigate([], {
-      queryParams: { breeds: this.selectedBreeds, page: 0, ageMin: this.ageMin, ageMax: this.ageMax, pageSize: this.pageSize },
+      queryParams: { breeds: this.selectedBreeds, page: null, pageSize: null, ageMin: this.ageMin, ageMax: this.ageMax },
       queryParamsHandling: 'merge'
     });
   }
   onSortChange(order: string): void {
     this.sortOrder = order;
     this.router.navigate([], {
-      queryParams: { page: 0, sortOrder: order, pageSize: this.pageSize },
+      queryParams: { page: null, pageSize: null, sortOrder: order },
       queryParamsHandling: 'merge'
     });
   }
@@ -109,10 +104,10 @@ export class FilterComponent {
     this.router.navigate([], {
       queryParams: { 
         breeds: this.selectedBreeds, 
-        page: 0, 
+        page: null,
+        pageSize: null,
         ageMin: this.ageMin, 
         ageMax: this.ageMax, 
-        pageSize: this.pageSize,
         sortOrder: this.sortOrder,
         sortField: this.sortField
       },

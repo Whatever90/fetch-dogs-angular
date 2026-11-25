@@ -1,56 +1,98 @@
 <div class="modal fade" id="favoritesModal" tabindex="-1" aria-labelledby="favoritesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header justify-content-between">
-                <h1 class="modal-title fs-5">Favorites list</h1>
-                <button type="button" class="btn-close m-0" (click)="closeModal()" aria-label="Close"></button>
-            </div>
-            <div class="alert alert-success fade-in m-3" *ngIf="matchedDog && favorites.includes(matchedDog.id)">
-                <div class="text-cetner p-2">
-                    <h1 class="modal-title fs-5 text-center">You matched {{ matchedDog.name }}!</h1>
+    <div class="modal-dialog modal-lg modal-dialog-scrollable saved-dogs-dialog">
+        <div class="modal-content saved-dogs-content">
+            <div class="modal-header saved-dogs-header">
+                <div class="saved-dogs-heading">
+                    <p class="saved-dogs-eyebrow">Your shortlist</p>
+                    <div class="saved-dogs-title-row">
+                        <h1 class="modal-title saved-dogs-title" id="favoritesModalLabel">Saved dogs</h1>
+                        <span class="saved-dogs-count">{{ favorites.length }}</span>
+                    </div>
+                    <p class="saved-dogs-intro">The dogs you’d like to meet, all in one place.</p>
                 </div>
-                <div class="modal-body">
-                    <img [src]="matchedDog.img" class="img-fluid d-block mx-auto" alt="Responsive image">
-                    <div class="row mt-3">
-                        <div class="col-6 text-end">
-                            <h6><strong>Breed:</strong></h6>
-                        </div>
-                        <div class="col-6">
-                            <h6>{{ matchedDog.breed }}</h6>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 text-end">
-                            <h6><strong>Age:</strong></h6>
-                        </div>
-                        <div class="col-6">
-                            <h6>{{ matchedDog.age }}</h6>
-                        </div>
-                    </div>
-                    <div class="row" *ngIf="matchedDog.location">
-                        <div class="col-6 text-end">
-                            <h6><strong>Address:</strong></h6>
-                        </div>
-                        <div class="col-6">
-                            <h6>{{ matchedDog.location.city }}, {{ matchedDog.location.state }} ({{
-                                matchedDog.location.county }} County), {{
-                                matchedDog.zip_code }}</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="alert alert-light text-center m-3" *ngIf="favorites.length">
-                <button class="btn btn-success" (click)="generateMatch()">
-                    <span *ngIf="!matchedDog || !favorites.includes(matchedDog.id)">Generate</span>
-                    <span *ngIf="matchedDog && favorites.includes(matchedDog.id)">Retry</span>
-                    Match
+                <button type="button" class="saved-dogs-close" (click)="closeModal()" aria-label="Close saved dogs">
+                    <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div *ngIf="!favorites.length" class="alert alert-warning fade-in text-center">
-                    <strong>Oops!</strong> Looks like there are no favorites selected...
+
+            <div class="modal-body saved-dogs-body">
+                <section class="match-panel" *ngIf="convertFavoritesToDogsList().length && !isLoadingMissingDogs"
+                    aria-labelledby="match-panel-title">
+                    <div class="match-panel-copy">
+                        <p class="match-panel-eyebrow">A little help choosing?</p>
+                        <h2 id="match-panel-title">Find your match</h2>
+                        <p>We’ll pick a dog from your saved list for you to meet.</p>
+                    </div>
+                    <button type="button" class="match-button" (click)="generateMatch()" [disabled]="isMatching">
+                        <span class="match-button-spinner" *ngIf="isMatching" aria-hidden="true"></span>
+                        <span aria-hidden="true" *ngIf="!isMatching">✦</span>
+                        {{ isMatching ? 'Finding a match…' : matchedDog && favorites.includes(matchedDog.id) ? 'Find another match' : 'Find my match' }}
+                    </button>
+                </section>
+
+                <section class="match-result" *ngIf="matchedDog && favorites.includes(matchedDog.id)"
+                    aria-labelledby="match-result-title" aria-live="polite">
+                    <img dogImageFallback [src]="matchedDog.img || 'dog-placeholder.png'"
+                        class="match-result-photo" [alt]="matchedDog.name || 'Your matched dog'">
+                    <div class="match-result-copy">
+                        <p class="match-result-eyebrow">Your match</p>
+                        <h2 id="match-result-title">Meet {{ matchedDog.name }}</h2>
+                        <p class="match-result-summary">{{ matchedDog.breed }}<span *ngIf="matchedDog.age !== undefined"> · {{ matchedDog.age }} {{ matchedDog.age === 1 ? 'year' : 'years' }} old</span></p>
+                        <dl class="match-details">
+                            <div>
+                                <dt>Breed</dt>
+                                <dd>{{ matchedDog.breed || 'Not listed' }}</dd>
+                            </div>
+                            <div *ngIf="matchedDog.age !== undefined">
+                                <dt>Age</dt>
+                                <dd>{{ matchedDog.age }} {{ matchedDog.age === 1 ? 'year' : 'years' }}</dd>
+                            </div>
+                            <div class="match-location" *ngIf="matchedDog.location">
+                                <dt>Location</dt>
+                                <dd>
+                                    {{ matchedDog.location.city }}, {{ matchedDog.location.state }}
+                                    <span *ngIf="matchedDog.location.county"> · {{ matchedDog.location.county }} County</span>
+                                    <span *ngIf="matchedDog.zip_code"> · {{ matchedDog.zip_code }}</span>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </section>
+
+                <section class="saved-empty-state" *ngIf="!favorites.length" aria-labelledby="saved-empty-title">
+                    <span class="saved-empty-icon" aria-hidden="true">♡</span>
+                    <h2 id="saved-empty-title">No saved dogs yet</h2>
+                    <p>Save a dog while you browse and they’ll show up here.</p>
+                    <button type="button" class="browse-dogs-button" (click)="closeModal()">Back to browsing</button>
+                </section>
+
+                <div class="saved-dogs-loading" *ngIf="isLoadingMissingDogs" role="status">
+                    <span class="saved-dogs-loading-spinner" aria-hidden="true"></span>
+                    <span>Loading your saved dogs…</span>
                 </div>
-                <dogs-list [loadingStatus]="false" [favoritesMode]="true" [dogs]="convertFavoritesToDogsList()" [favorites]="favorites"
+
+                <section class="saved-dogs-warning"
+                    *ngIf="missingFavoriteIds.length && !isLoadingMissingDogs" role="alert">
+                    <div>
+                        <h2>Some saved dogs are unavailable</h2>
+                        <p>{{ missingFavoriteIds.length }} {{ missingFavoriteIds.length === 1 ? 'dog could' : 'dogs could' }}
+                            not be loaded.</p>
+                    </div>
+                    <button type="button" class="remove-unavailable-button"
+                        (click)="removeUnavailableFavorites()">Remove unavailable</button>
+                </section>
+
+                <div class="saved-list-heading" *ngIf="convertFavoritesToDogsList().length && !isLoadingMissingDogs">
+                    <div>
+                        <h2>Your saved list</h2>
+                        <p>Select a photo to view a dog’s profile, or remove a dog from your list.</p>
+                    </div>
+                    <span>{{ favorites.length }} {{ favorites.length === 1 ? 'dog' : 'dogs' }}</span>
+                </div>
+
+                <dogs-list *ngIf="convertFavoritesToDogsList().length && !isLoadingMissingDogs"
+                    [loadingStatus]="false" [favoritesMode]="true"
+                    [dogs]="convertFavoritesToDogsList()" [favorites]="favorites"
                     (updateFavorites)="toggleFavorite($event)"
                     (updateSelectedDog)="selectedDogUpdated($event)"></dogs-list>
             </div>

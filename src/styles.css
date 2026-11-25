@@ -1,89 +1,226 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
-@import 'leaflet/dist/leaflet.css';
+@import "leaflet/dist/leaflet.css";
+
+:root {
+    color-scheme: light;
+    font-family: "Manrope", "Avenir Next", Avenir, "Segoe UI", sans-serif;
+    color: #072635;
+    background: #f6f7f8;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-width: 320px;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    background: #f6f7f8;
+    color: #072635;
+    font-family: "Manrope", "Avenir Next", Avenir, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(13, 148, 141, 0.55);
+    outline-offset: 2px;
+}
 
 .page-link {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .shadow-hover {
-	box-shadow: 7px 8px 14px 1px #c0c0c000;
-	transition: box-shadow 0.2s ease-in;
+    box-shadow: 0 5px 16px rgba(7, 38, 53, 0.06);
+    transition: box-shadow 0.2s ease-in;
 }
 
 .shadow-hover:hover {
-	box-shadow: 7px 8px 14px 1px #c0c0c02b;
-}
-
-.btn-success,
-.btn-outline-success {
-	box-shadow: 0px 0px 0px 0px #ffffff63;
-	transition: all 0.2s ease-in;
-}
-
-.btn-success:hover,
-.btn-outline-success:hover {
-	box-shadow: 3px 3px 12px 2px #1987544f;
-}
-
-
-.btn-warning,
-.btn-outline-warning {
-	box-shadow: 0px 0px 0px 0px #fcfcfc;
-	transition: all 0.2s ease-in;
-}
-
-.btn-warning:hover,
-.btn-outline-warning:hover {
-	box-shadow: 3px 3px 12px 2px #ffc1075e;
-}
-
-.btn-primary,
-.btn-outline-primary {
-	box-shadow: 0px 0px 0px 0px #ffffff;
-	transition: all 0.2s ease-in;
-}
-
-.btn-primary:hover,
-.btn-outline-primary:hover {
-	box-shadow: 3px 3px 12px 2px #0d6efd61;
+    box-shadow: 0 9px 22px rgba(7, 38, 53, 0.1);
 }
 
 .fade-in {
-	opacity: 1;
-	animation-name: fadeInOpacity;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in-out;
-	animation-duration: 0.2s;
+    animation: fadeInOpacity 0.2s ease-in-out 1;
 }
 
 .w-fill {
-	width: -webkit-fill-available;
-}
-
-@keyframes fadeInOpacity {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
+    width: 100%;
 }
 
 .dog_background {
-	background: url('./assets/dogBackground.png') no-repeat bottom right;
-	background-size: 161px;
+    background-color: #fff;
 }
 
-.h-100vh {
-	height: 100vh;
+.btn {
+    border-radius: 10px;
 }
 
-.btn-sm {
-	padding: 0.25rem 0.5rem;
-	/* Adjusts the internal spacing */
-	font-size: 0.875rem;
-	/* Smaller font size */
-	line-height: 1.5;
-	/* Ensures a comfortable line height */
+.btn-primary {
+    border-color: #087c78;
+    background: #087c78;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    border-color: #066b67;
+    background: #066b67;
+}
+
+.btn-outline-primary {
+    border-color: #a7cfcb;
+    color: #087c78;
+}
+
+.btn-outline-primary:hover {
+    border-color: #087c78;
+    background: #087c78;
+}
+
+.dog-map-pin {
+    border: 0;
+    background: transparent;
+}
+
+.dog-map-pin span {
+    position: relative;
+    display: flex;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #087c78;
+    box-shadow: 0 2px 8px rgba(7, 38, 53, 0.3);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.dog-map-pin span::after {
+    position: absolute;
+    bottom: -5px;
+    left: 10px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    background: #087c78;
+    content: "";
+    transform: rotate(45deg);
+}
+
+.dog-map-pin .dog-map-pin-single::before {
+    position: absolute;
+    top: 11px;
+    left: 11px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    content: "";
+}
+
+.dog-map-popup {
+    min-width: 130px;
+    text-align: center;
+}
+
+.dog-map-popup-preview {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.dog-map-popup-preview img {
+    width: 100px;
+    height: 80px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.dog-map-popup-name,
+.dog-map-popup-detail {
+    margin: 0.2rem 0 0;
+}
+
+.dog-map-popup-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.dog-map-popup-detail {
+    color: #65777e;
+    font-size: 0.76rem;
+}
+
+.dog-map-popup-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.dog-map-popup-navigation button {
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+    border: 1px solid #b9d8d5;
+    border-radius: 50%;
+    background: #f0f8f7;
+    color: #087c78;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.dog-map-popup-navigation button:disabled {
+    opacity: 0.45;
+}
+
+.dog-map-popup-position {
+    min-width: 3rem;
+    color: #23434b;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+@keyframes fadeInOpacity {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

@@ -48,7 +48,6 @@ describe('FilterComponent', () => {
     component.ageMin = 3;
     component.ageMax = 11;
     component.breeds = [];
-    component.pageSize = 11;
   
     component.applyFilters();
   
@@ -59,7 +58,8 @@ describe('FilterComponent', () => {
         ageMin: 3,
         ageMax: 11,
         breeds: [],
-        pageSize: 11
+        page: null,
+        pageSize: null
       }),
       queryParamsHandling: 'merge'
     }));

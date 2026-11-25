@@ -1,67 +1,73 @@
-<div class="modal fade" id="filterSettingsModal" tabindex="-1" aria-labelledby="filterSettingsModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header justify-content-between p-2">
-                <div></div>
-                <h1 class="modal-title fs-5" id="filterSettingsModalLabel">Filter settings</h1>
-                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade filter-settings-modal" id="filterSettingsModal" tabindex="-1"
+    aria-labelledby="filterSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered filter-settings-dialog">
+        <div class="modal-content filter-settings-content">
+            <div class="modal-header filter-settings-header">
+                <div class="filter-settings-heading">
+                    <p class="filter-settings-eyebrow">Search preferences</p>
+                    <h1 class="modal-title filter-settings-title" id="filterSettingsModalLabel">Filter your search</h1>
+                    <p class="filter-settings-intro">Narrow the results to find your best match.</p>
+                </div>
+                <button type="button" class="btn-close filter-settings-close" data-bs-dismiss="modal"
+                    aria-label="Close filter settings"></button>
             </div>
-            <div class="modal-body dog_background">
-                <!-- Filter by Breed -->
-                <div class="form-group mb-4">
-                    <label for="filterByBreed" class="form-label">Filter by Breed:</label>
-                    <select *ngIf="breeds.length" id="filterByBreed" multiple class="form-control"
-                        [(ngModel)]="selectedBreeds" name="breeds">
+            <div class="modal-body filter-settings-body">
+                <section class="filter-section" aria-labelledby="breedFilterLabel">
+                    <div class="filter-section-heading">
+                        <label for="filterByBreed" id="breedFilterLabel" class="filter-field-label">Breed</label>
+                        <p id="breedFilterHelp" class="filter-field-help">Select one or more. Leave empty to include all breeds.</p>
+                    </div>
+                    <select *ngIf="breeds.length" id="filterByBreed" multiple class="form-select filter-breed-select"
+                        [(ngModel)]="selectedBreeds" name="breeds" aria-describedby="breedFilterHelp">
                         <option *ngFor="let breed of breeds" [value]="breed">{{ breed }}</option>
                     </select>
-                </div>
-                <!-- Age -->
-                <div class="d-flex justify-content-between" [ngClass]="{'text-danger': ageMin > ageMax }">
-                    <div class="form-group mb-3 me-3 input-element-wrapper">
-                        <label for="ageMin" class="form-label">Minimum Age:</label>
-                        <input type="number" [max]="ageMax" id="ageMin" [(ngModel)]="ageMin" name="ageMin"
-                            class="form-control" placeholder="Enter min age">
-                    </div>
-                    <div class="form-group mb-3 me-3 input-element-wrapper">
-                        <label for="ageMax" class="form-label">Maximum Age:</label>
-                        <input type="number" [min]="ageMin" id="ageMax" [(ngModel)]="ageMax" name="ageMax"
-                            class="form-control" placeholder="Enter max age">
-                    </div>
-                    <!-- Page size -->
-                    <div class="form-group mb-3 input-element-wrapper">
-                        <label for="pageSize" class="form-label">Page size:</label>
-                        <input type="number" [min]="1" id="pageSize" [(ngModel)]="pageSize" name="pageSize"
-                            class="form-control" placeholder="Enter page size">
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <!-- Sort field -->
-                    <div class="mb-3 me-3 input-element-wrapper">
-                        <label for="sortField" class="form-label">Sort by Field:</label>
-                        <select id="sortField" class="form-control" [(ngModel)]="sortField" name="sortField">
-                            <option value="name">Name</option>
-                            <option value="breed">Breed</option>
-                            <option value="age">Age</option>
+                </section>
 
-                        </select>
+                <section class="filter-section" aria-labelledby="ageFilterHeading">
+                    <h2 id="ageFilterHeading" class="filter-section-title">Age range</h2>
+                    <div class="filter-field-grid" [ngClass]="{'filter-range-invalid': ageMin > ageMax}">
+                        <div class="filter-field">
+                            <label for="ageMin" class="filter-field-label">Minimum age</label>
+                            <input type="number" [max]="ageMax" id="ageMin" [(ngModel)]="ageMin" name="ageMin"
+                                class="form-control" min="0" placeholder="Any age">
+                        </div>
+                        <div class="filter-field">
+                            <label for="ageMax" class="filter-field-label">Maximum age</label>
+                            <input type="number" [min]="ageMin" id="ageMax" [(ngModel)]="ageMax" name="ageMax"
+                                class="form-control" min="0" placeholder="Any age">
+                        </div>
                     </div>
-                    <!-- Sort Order -->
-                    <div class="mb-3 input-element-wrapper">
-                        <label for="sortOrder" class="form-label">Order:</label>
-                        <select id="sortOrder" class="form-control" [(ngModel)]="sortOrder" name="sortOrder">
-                            <option value="asc">Ascending</option>
-                            <option value="desc">Descending</option>
-                        </select>
+                    <p *ngIf="ageMin > ageMax" class="filter-validation" role="alert">
+                        Minimum age must be less than or equal to maximum age.
+                    </p>
+                </section>
+
+                <section class="filter-section" aria-labelledby="sortFilterHeading">
+                    <h2 id="sortFilterHeading" class="filter-section-title">Sort results</h2>
+                    <div class="filter-field-grid">
+                        <div class="filter-field">
+                            <label for="sortField" class="filter-field-label">Sort by</label>
+                            <select id="sortField" class="form-select" [(ngModel)]="sortField" name="sortField">
+                                <option value="name">Name</option>
+                                <option value="breed">Breed</option>
+                                <option value="age">Age</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="sortOrder" class="filter-field-label">Order</label>
+                            <select id="sortOrder" class="form-select" [(ngModel)]="sortOrder" name="sortOrder">
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <!-- Psuedo footer -->
-                <div class="mt-2 p-4"></div>
+                </section>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
-                <button type="button" class="btn btn-primary" [disabled]="ageMin > ageMax || pageSize < 1" (click)="save()">Save changes</button>
-              </div>
+            <div class="modal-footer filter-settings-footer">
+                <button type="button" class="btn btn-light filter-cancel-button" (click)="cancel()">Cancel</button>
+                <button type="button" class="btn btn-primary filter-save-button" [disabled]="ageMin > ageMax"
+                    (click)="save()">Apply filters</button>
+            </div>
         </div>
     </div>
 </div>

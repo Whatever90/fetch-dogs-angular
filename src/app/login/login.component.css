@@ -1,33 +1,131 @@
-.login-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-.login-container h1 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.login-container label {
+:host {
     display: block;
-    margin-bottom: 0.5rem;
+    min-height: 100vh;
 }
 
-.login-container input {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.login-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 1.5rem;
+    background:
+        radial-gradient(ellipse at 12% 10%, rgba(205, 235, 231, 0.6), transparent 34rem),
+        #f6f7f8;
 }
 
-.error {
-    color: red;
+.login-card {
+    width: min(100%, 440px);
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    border: 1px solid #e8edef;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 18px 55px rgba(7, 38, 53, 0.08);
+}
+
+.login-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: #072635;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    text-decoration: none;
+}
+
+.login-brand-mark {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border-radius: 12px;
+    background: #e3f3f1;
+    color: #087c78;
+}
+
+.login-heading {
+    margin: 2rem 0 1.5rem;
+}
+
+.login-heading .eyebrow {
+    margin: 0 0 0.35rem;
+    color: #087c78;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.login-heading h1 {
+    margin: 0;
+    color: #072635;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.055em;
+}
+
+.login-heading p:last-child {
+    margin: 0.4rem 0 0;
+    color: #66777e;
+    font-size: 0.9rem;
+}
+
+.form-field {
     margin-bottom: 1rem;
 }
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: #314951;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.form-field .form-control {
+    min-height: 46px;
+    border-color: #dce5e7;
+    border-radius: 10px;
+    color: #072635;
+    font-size: 0.9rem;
+}
+
+.form-field .form-control:focus {
+    border-color: #54aaa4;
+    box-shadow: 0 0 0 0.2rem rgba(8, 124, 120, 0.12);
+}
+
 .login-btn {
-    width: 65px;
+    display: flex;
+    width: 100%;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.login-btn:disabled {
+    border-color: #94bab7;
+    background: #94bab7;
+}
+
+.login-note {
+    margin: 1.25rem 0 0;
+    padding-top: 1.1rem;
+    border-top: 1px solid #edf0f1;
+    color: #77868c;
+    font-size: 0.73rem;
+    line-height: 1.55;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .login-page {
+        padding: 1rem;
+    }
+
+    .login-card {
+        border-radius: 18px;
+    }
 }

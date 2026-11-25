@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Modal } from 'bootstrap';
 import { Dog } from '../../dog.model';
+import { DogImageFallbackDirective } from '../dog-image-fallback.directive';
 
 @Component({
   selector: 'dog-preview',
-  imports: [CommonModule],
+  imports: [CommonModule, DogImageFallbackDirective],
   templateUrl: './dog-preview.component.html',
   styleUrl: './dog-preview.component.css'
 })

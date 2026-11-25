@@ -2,13 +2,19 @@
     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" *ngIf="dog">
-            <div class="modal-header justify-content-between p-2">
-                <div></div>
-                <h1 class="modal-title fs-5" id="dogImageExpandModalLabel">{{ dog.name }}</h1>
-                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header dog-preview-header">
+                <div class="dog-preview-heading">
+                    <p class="dog-preview-eyebrow">Dog profile</p>
+                    <h1 class="modal-title dog-preview-title" id="dogImageExpandModalLabel">
+                        {{ dog.name || 'Meet this dog' }}
+                    </h1>
+                </div>
+                <button type="button" class="btn-close dog-preview-close" data-bs-dismiss="modal"
+                    aria-label="Close dog profile"></button>
             </div>
-            <div class="modal-body dog_background text-center">
-                <img [src]="dog.img" class="img-fluid d-block mx-auto" alt="Responsive image">
+            <div class="modal-body dog_background dog-preview-body text-center">
+                <img dogImageFallback [src]="dog.img || 'dog-placeholder.png'" class="img-fluid d-block mx-auto dog-preview-photo"
+                    [alt]="dog.name || 'Dog profile image'">
                 <h6><strong>Breed:</strong> {{ dog.breed }}</h6>
 
                 <h6><strong>Age:</strong> {{ dog.age }}</h6>
@@ -16,11 +22,14 @@
                     dog.location.county }} County), {{
                     dog.zip_code }}</h6>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-sm"
-                    [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}"
+            <div class="modal-footer dog-preview-footer">
+                <button type="button" class="dog-preview-save-button"
+                    [class.is-saved]="favorites.includes(dog.id)"
+                    [attr.aria-pressed]="favorites.includes(dog.id)"
+                    [attr.aria-label]="favorites.includes(dog.id) ? 'Remove ' + dog.name + ' from saved dogs' : 'Save ' + dog.name"
                     (click)="toggleFavorite(dog.id)">
-                    {{ favorites.includes(dog.id) ? 'Unfavorite' : 'Favorite' }}
+                    <span aria-hidden="true">{{ favorites.includes(dog.id) ? '♥' : '♡' }}</span>
+                    {{ favorites.includes(dog.id) ? 'Saved' : 'Save dog' }}
                 </button>
             </div>
         </div>

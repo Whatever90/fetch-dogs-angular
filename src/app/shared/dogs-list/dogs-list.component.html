@@ -1,45 +1,55 @@
-<div class="dog-list">
+<div class="dog-list" [class.favorites-mode]="favoritesMode" aria-live="polite">
     <ng-container *ngIf="!loadingStatus">
-        <div class="card dog-card shadow-hover fade-in" *ngFor="let dog of dogs">
-            <div class="card-body" *ngIf="dog" (mouseenter)="hoverDog(dog)">
-                <!-- Button trigger dog preview modal -->
-                <img type="button" class="card-img-top" (click)="selectDog(dog)" [src]="dog?.img" alt="{{ dog?.name }}">
-                <h4 class="card-title">{{ dog.name }}</h4>
-                <p class="card-subtitle mb-2 text-muted"><strong>Breed:</strong> {{ dog.breed }}</p>
-                <p class="card-subtitle mb-2 text-muted"><strong>Age:</strong> {{ dog.age }}</p>
-                <ng-container *ngIf="dog.location">
-                    <strong>Address:</strong> {{ dog.location.city }}, {{ dog.location.state }} ({{ dog.location.county
-                    }} County), {{ dog.zip_code }}
-                </ng-container>
-                <button class="btn w-fill btn-sm"
-                    [ngClass]="{'btn-outline-success': !favorites.includes(dog.id), 'btn-outline-warning': favorites.includes(dog.id)}"
+        <article class="dog-card fade-in" *ngFor="let dog of dogs" (mouseenter)="hoverDog(dog)">
+            <button type="button" class="dog-photo-button" (click)="selectDog(dog)"
+                [attr.aria-label]="'View details for ' + dog.name">
+                <img dogImageFallback class="dog-photo" [src]="dog.img || 'dog-placeholder.png'"
+                    [alt]="dog.name || 'Dog available for adoption'"
+                    loading="lazy">
+                <span class="photo-badge" *ngIf="dog.age !== undefined">{{ dog.age }} {{ dog.age === 1 ? 'year' : 'years' }} old</span>
+            </button>
+            <div class="dog-details">
+                <div class="dog-title-row">
+                    <h3 class="dog-name">{{ dog.name }}</h3>
+                    <span class="dog-age" *ngIf="dog.age !== undefined">{{ dog.age }}y</span>
+                </div>
+                <p class="dog-breed" *ngIf="dog.breed as breed">
+                    <span class="dog-breed-trigger" tabindex="0"
+                        [attr.aria-describedby]="'breed-description-' + dog.id">
+                        {{ breed }}
+                        <span class="dog-breed-tooltip" role="tooltip" [id]="'breed-description-' + dog.id">
+                            {{ getBreedDescription(breed) }}
+                        </span>
+                    </span>
+                </p>
+                <p class="dog-location" *ngIf="dog.location">
+                    <span aria-hidden="true">⌖</span>
+                    {{ dog.location.city }}, {{ dog.location.state }}
+                </p>
+                <p class="dog-location" *ngIf="!dog.location && dog.zip_code">
+                    <span aria-hidden="true">⌖</span>
+                    {{ dog.zip_code }}
+                </p>
+                <button type="button" class="favorite-toggle"
+                    [class.is-favorite]="favorites.includes(dog.id)"
+                    [class.is-remove-action]="favoritesMode && favorites.includes(dog.id)"
+                    [attr.aria-pressed]="favorites.includes(dog.id)"
+                    [attr.aria-label]="favoritesMode ? 'Remove ' + dog.name + ' from saved dogs' : favorites.includes(dog.id) ? 'Remove ' + dog.name + ' from saved dogs' : 'Save ' + dog.name"
                     (click)="toggleFavorite(dog.id)">
-                    {{ favorites.includes(dog.id) ? 'Unfavorite' : 'Favorite' }}
+                    <span aria-hidden="true">{{ favoritesMode ? '×' : favorites.includes(dog.id) ? '♥' : '♡' }}</span>
+                    {{ favoritesMode ? 'Remove' : favorites.includes(dog.id) ? 'Saved' : 'Save dog' }}
                 </button>
             </div>
-        </div>
-        <div class="alert alert-warning" role="alert" *ngIf="!favoritesMode && !dogs.length">
-            <strong>No dogs found in the area.</strong> Please adjust your search criteria.
+        </article>
+        <div class="empty-state" *ngIf="!favoritesMode && !dogs.length">
+            <span class="empty-icon" aria-hidden="true">⌖</span>
+            <h3>No dogs in this area yet</h3>
+            <p>Try moving the map or adjusting your filters to see more dogs.</p>
         </div>
     </ng-container>
 
-
-    <!-- Loading placeholder -->
-    <ng-container *ngIf="loadingStatus">
-        <div class="card dog-card" aria-hidden="true" *ngFor="let i of [0,0,0,0,0,0,0,0,0]">
-            <div class="card-body">
-                <h5 class="card-title placeholder-glow">
-                    <span class="placeholder col-6"></span>
-                </h5>
-                <p class="card-text placeholder-glow">
-                    <span class="placeholder col-7"></span>
-                    <span class="placeholder col-4"></span>
-                    <span class="placeholder col-4"></span>
-                    <span class="placeholder col-6"></span>
-                    <span class="placeholder col-8"></span>
-                </p>
-                <a class="btn btn-sm btn-outline-success disabled placeholder col-6" aria-disabled="true"></a>
-            </div>
-        </div>
-    </ng-container>
+    <div class="loading-state" *ngIf="loadingStatus" role="status" aria-label="Loading dogs">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        <span>Finding dogs for you…</span>
+    </div>
 </div>

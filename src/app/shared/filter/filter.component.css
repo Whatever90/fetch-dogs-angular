@@ -1,9 +1,184 @@
-.input-element-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    align-content: stretch;
-    width: -webkit-fill-available;
+.filter-settings-dialog {
+    max-width: min(620px, calc(100vw - 1.5rem));
+}
+
+.filter-settings-content {
+    overflow: hidden;
+    border: 1px solid #e2e9eb;
+    border-radius: 20px;
+    box-shadow: 0 24px 70px rgba(7, 38, 53, 0.2);
+}
+
+.filter-settings-header {
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.35rem 1.5rem 1.2rem;
+    border-bottom: 1px solid #edf0f1;
+    background: #fff;
+}
+
+.filter-settings-heading {
+    min-width: 0;
+}
+
+.filter-settings-eyebrow {
+    margin: 0 0 0.25rem;
+    color: #087c78;
+    font-size: 0.67rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.filter-settings-title {
+    margin: 0;
+    color: #072635;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+}
+
+.filter-settings-intro {
+    margin: 0.4rem 0 0;
+    color: #65777e;
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+
+.filter-settings-close {
+    flex-shrink: 0;
+    margin: 0.15rem 0 0 1rem;
+}
+
+.filter-settings-body {
+    display: grid;
+    gap: 1.35rem;
+    padding: 1.35rem 1.5rem;
+    background: #f8fafb;
+}
+
+.filter-section {
+    min-width: 0;
+}
+
+.filter-section-heading {
+    margin-bottom: 0.65rem;
+}
+
+.filter-field-label,
+.filter-section-title {
+    display: block;
+    margin: 0 0 0.35rem;
+    color: #183944;
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.filter-section-title {
+    margin-bottom: 0.7rem;
+}
+
+.filter-field-help {
+    margin: 0;
+    color: #73848a;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.filter-breed-select {
+    height: 172px;
+    padding: 0.35rem;
+    border-color: #dce5e7;
+    border-radius: 11px;
+    background-color: #fff;
+}
+
+.filter-breed-select option {
+    padding: 0.35rem 0.55rem;
+    border-radius: 6px;
+}
+
+.filter-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.filter-field {
+    min-width: 0;
+}
+
+.filter-field .form-control,
+.filter-field .form-select {
+    min-height: 43px;
+    border-color: #dce5e7;
+    border-radius: 10px;
+    color: #183944;
+    font-size: 0.84rem;
+}
+
+.filter-field .form-control::placeholder {
+    color: #94a1a5;
+}
+
+.filter-range-invalid .form-control {
+    border-color: #c2413b;
+}
+
+.filter-validation {
+    margin: 0.6rem 0 0;
+    color: #a3322d;
+    font-size: 0.76rem;
+    font-weight: 650;
+}
+
+.filter-settings-footer {
+    gap: 0.65rem;
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid #edf0f1;
+    background: #fff;
+}
+
+.filter-settings-footer .btn {
+    min-height: 42px;
+    padding: 0.55rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.filter-cancel-button {
+    border: 1px solid #dfe7e8;
+    color: #43565d;
+}
+
+.filter-save-button {
+    min-width: 130px;
+}
+
+@media (max-width: 640px) {
+    .filter-settings-dialog {
+        margin: 0.75rem auto;
+    }
+
+    .filter-settings-header {
+        padding: 1.05rem 1.1rem;
+    }
+
+    .filter-settings-title {
+        font-size: 1.15rem;
+    }
+
+    .filter-settings-body {
+        gap: 1.1rem;
+        padding: 1.1rem;
+    }
+
+    .filter-field-grid {
+        gap: 0.7rem;
+    }
+
+    .filter-settings-footer {
+        padding: 0.85rem 1.1rem 1.05rem;
+    }
 }
